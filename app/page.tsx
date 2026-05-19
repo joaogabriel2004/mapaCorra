@@ -134,8 +134,6 @@ export default function Home() {
     ]);
 
     setFormData(initialForm);
-
-    alert("Formulário adicionado!");
   };
 
   const enviarTodos = async () => {
@@ -309,20 +307,24 @@ export default function Home() {
             >
               Adicionar à Lista
             </button>
-
-            <button
-              type="button"
-              onClick={enviarTodos}
-              disabled={loading}
-              className="flex-1 bg-[#ef7d00] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition disabled:opacity-50"
-            >
-              {loading
-                ? "Enviando..."
-                : "Enviar Todos"}
-            </button>
           </div>
 
           <FormulariosTable formularios={formularios} />
+
+          {formularios.length > 0 && (
+            <div className="flex flex-col md:flex-row gap-4 mt-8">
+              <button
+                  type="button"
+                  onClick={enviarTodos}
+                  disabled={loading}
+                  className="flex-1 bg-[#ef7d00] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition disabled:opacity-50"
+                >
+                  {loading
+                    ? "Enviando..."
+                    : "Enviar Todos"}
+                </button>
+            </div>
+          )};
         </div>
       </div>
     </main>

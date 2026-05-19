@@ -107,17 +107,13 @@ export default function FormulariosTable({
             ))}
           </tbody>
 
-          <tfoot className="bg-[#f4f0e8]">
+          <tfoot className="bg-[#f4f0e8] text-left">
             <tr>
               <td
                 colSpan={11}
-                className="p-4 text-right font-bold text-gray-800"
+                className="p-4 text-left font-bold text-gray-800"
               >
-                Total de pessoas:
-              </td>
-
-              <td className="p-4 text-center font-black text-[#ef7d00]">
-                {formularios.length}
+                Total de pessoas: <span className="font-black text-[#ef7d00]">{formularios.length}</span>
               </td>
             </tr>
           </tfoot>
