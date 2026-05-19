@@ -1,65 +1,327 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+
+import Input from "@/app/components/Input";
+import Select from "@/app/components/Select";
+import SuggestionList from "@/app/components/SuggestionList";
+
+import {
+  buscarFormularios,
+  enviarFormulario,
+} from "@/app/services/api";
+
+import {
+  Formulario,
+  initialForm,
+} from "@/app/types/formulario";
 
 export default function Home() {
+  const [formData, setFormData] =
+    useState<Formulario>(initialForm);
+
+  const [formularios, setFormularios] =
+    useState<Formulario[]>([]);
+
+  const [dadosApi, setDadosApi] =
+    useState<Formulario[]>([]);
+
+  const [sugestoes, setSugestoes] =
+    useState<Formulario[]>([]);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  useEffect(() => {
+    carregarDados();
+  }, []);
+
+  const carregarDados = async () => {
+    try {
+      const data =
+        await buscarFormularios();
+
+      if (data?.data) {
+        setDadosApi(data.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement |
+      HTMLSelectElement |
+      HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    // autocomplete nome
+    if (name === "nomeCompleto") {
+      if (value.length > 1) {
+        const filtrados =
+          dadosApi.filter((pessoa) =>
+            pessoa.nomeCompleto
+              .toLowerCase()
+              .includes(
+                value.toLowerCase()
+              )
+          );
+
+        setSugestoes(filtrados);
+      } else {
+        setSugestoes([]);
+      }
+    }
+  };
+
+  const selecionarPessoa = (
+    pessoa: Formulario
+  ) => {
+    setFormData({
+      id: String(pessoa.id),
+      data: new Date().toISOString(),
+      nomeCompleto: pessoa.nomeCompleto || "",
+      idade: String(pessoa.idade) || "",
+      sexo: pessoa.sexo || "",
+      identidadeGenero: pessoa.identidadeGenero || "",
+      racaCor: pessoa.racaCor || "",
+      spas: pessoa.spas || "",
+      tecnico: pessoa.tecnico || "",
+      intervencao: pessoa.intervencao || "",
+      territorio: pessoa.territorio || "",
+      insumos: pessoa.insumos || "",
+      cadUnico: pessoa.cadUnico || "",
+    });
+
+    setSugestoes([]);
+  };
+
+  const adicionarFormulario = () => {
+    const idGerado = (
+      Date.now()
+        .toString()
+        .slice(-4) +
+      Math.floor(
+        Math.random() * 10
+      )
+    ).toString();
+
+    const formularioComId = {
+      ...formData,
+
+      id:
+        formData.id || idGerado,
+
+      data:
+        formData.data ||
+        new Date().toLocaleDateString(
+          "pt-BR"
+        ),
+    };
+
+    setFormularios((prev) => [
+      ...prev,
+      formularioComId,
+    ]);
+
+    setFormData(initialForm);
+
+    alert("Formulário adicionado!");
+  };
+
+  const enviarTodos = async () => {
+    if (formularios.length === 0) {
+      alert(
+        "Nenhum formulário adicionado."
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      for (const formulario of formularios) {
+        await enviarFormulario(
+          formulario
+        );
+      }
+
+      alert(
+        "Todos enviados com sucesso!"
+      );
+
+      setFormularios([]);
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao enviar");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-[#f4f0e8] p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-[#ef7d00] rounded-3xl p-8 shadow-xl mb-6">
+          <h1 className="text-4xl font-black text-white">
+            Corra Pro Abraço
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="text-white mt-2 text-lg">
+            Formulário de Atendimento
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="bg-white rounded-2xl p-4 shadow mb-6 border-l-8 border-[#009640]">
+          <p className="text-lg font-semibold text-gray-800">
+            Formulários adicionados:
+            <span className="text-[#ef7d00] ml-2">
+              {formularios.length}
+            </span>
+          </p>
         </div>
-      </main>
-    </div>
+
+        <div className="bg-white rounded-3xl shadow-xl p-8">
+          <div className="relative mb-4">
+              <Input
+                label="Nome Completo"
+                name="nomeCompleto"
+                value={
+                  formData.nomeCompleto
+                }
+                onChange={
+                  handleChange
+                }
+              />
+
+              <SuggestionList
+                sugestoes={sugestoes}
+                selecionarPessoa={
+                  selecionarPessoa
+                }
+              />
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input
+              label="Idade"
+              name="idade"
+              type="number"
+              value={formData.idade}
+              onChange={handleChange}
+            />
+
+            <Select
+              label="Sexo"
+              name="sexo"
+              value={formData.sexo}
+              onChange={handleChange}
+              options={[
+                "M",
+                "F",
+                "NR",
+              ]}
+            />
+
+            <Input
+              label="Id. Gênero"
+              name="identidadeGenero"
+              value={
+                formData.identidadeGenero
+              }
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Raça/Cor"
+              name="racaCor"
+              value={formData.racaCor}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="SPAs"
+              name="spas"
+              value={formData.spas}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Técnico"
+              name="tecnico"
+              value={formData.tecnico}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Território"
+              name="territorio"
+              value={
+                formData.territorio
+              }
+              onChange={handleChange}
+            />
+
+            <Input
+              label="Intervenção"
+              name="intervencao"
+              value={
+                formData.intervencao
+              }
+              onChange={handleChange}
+            />
+          
+            <Input
+              label="Insumos"
+              name="insumos"
+              value={formData.insumos}
+              onChange={handleChange}
+            />
+
+            <Select
+              label="Cad. Único"
+              name="cadUnico"
+              value={formData.cadUnico}
+              onChange={handleChange}
+              options={[
+                "Sim",
+                "Não",
+                "NR"
+              ]}
+            />
+          </div>          
+
+          <div className="flex flex-col md:flex-row gap-4 mt-8">
+            <button
+              type="button"
+              onClick={
+                adicionarFormulario
+              }
+              className="flex-1 bg-[#009640] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition"
+            >
+              Adicionar à Lista
+            </button>
+
+            <button
+              type="button"
+              onClick={enviarTodos}
+              disabled={loading}
+              className="flex-1 bg-[#ef7d00] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition disabled:opacity-50"
+            >
+              {loading
+                ? "Enviando..."
+                : "Enviar Todos"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

@@ -1,0 +1,31 @@
+export type Formulario = {
+  id: string;
+  data: string;
+  nomeCompleto: string;
+  idade: string;
+  sexo: string;
+  identidadeGenero: string;
+  racaCor: string;
+  spas: string;
+  tecnico: string;
+  intervencao: string;
+  territorio: string;
+  insumos: string;
+  cadUnico: string;
+};
+
+export const initialForm: Formulario = {
+  id: "",
+  data: "",
+  nomeCompleto: "",
+  idade: "",
+  sexo: "",
+  identidadeGenero: "",
+  racaCor: "",
+  spas: "",
+  tecnico: "",
+  intervencao: "",
+  territorio: "",
+  insumos: "",
+  cadUnico: "",
+};
