@@ -217,10 +217,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!user?.email) return;
-
     async function carregarTecnico() {
-
+      if (!user?.email) return;
+      
       const tecnico =
         await buscarTecnico(
           user.email!
