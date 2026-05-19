@@ -1,41 +1,42 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/AuthContext";
 
 import Input from "@/app/components/Input";
 import Select from "@/app/components/Select";
 import SuggestionList from "@/app/components/SuggestionList";
 import FormulariosTable from "@/app/components/FormulariosTable";
 
-import {
-  buscarFormularios,
-  enviarFormulario,
-} from "@/app/services/api";
+import { buscarTecnico } from "@/app/services/tecnicos";
 
-import {
-  Formulario,
-  initialForm,
-} from "@/app/types/formulario";
+import { buscarFormularios, enviarFormulario, } from "@/app/services/api";
+
+import { Formulario, initialForm, } from "@/app/types/formulario";
 
 export default function Home() {
-  const [formData, setFormData] =
-    useState<Formulario>(initialForm);
+  const router = useRouter();
 
-  const [formularios, setFormularios] =
-    useState<Formulario[]>([]);
+  const { user, loading: authLoading, logout, } = useAuth();
 
-  const [dadosApi, setDadosApi] =
-    useState<Formulario[]>([]);
+  const [formData, setFormData] = useState<Formulario>(initialForm);
 
-  const [sugestoes, setSugestoes] =
-    useState<Formulario[]>([]);
+  const [formularios, setFormularios] = useState<Formulario[]>([]);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [dadosApi, setDadosApi] = useState<Formulario[]>([]);
 
-  useEffect(() => {
-    carregarDados();
-  }, []);
+  const [sugestoes, setSugestoes] = useState<Formulario[]>([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const [dataPreenchimento, setDataPreenchimento] = useState( new Date().toISOString().split("T")[0]);
+
+  const [tecnicoLogado, setTecnicoLogado] = useState("");
+
+  // =========================
+  // FUNÇÕES
+  // =========================
 
   const carregarDados = async () => {
     try {
@@ -88,18 +89,38 @@ export default function Home() {
   ) => {
     setFormData({
       id: String(pessoa.id),
-      data: new Date().toISOString(),
-      nomeCompleto: pessoa.nomeCompleto || "",
-      idade: String(pessoa.idade) || "",
+
+      data: dataPreenchimento,
+
+      nomeCompleto:
+        pessoa.nomeCompleto || "",
+
+      idade:
+        String(pessoa.idade) || "",
+
       sexo: pessoa.sexo || "",
-      identidadeGenero: pessoa.identidadeGenero || "",
-      racaCor: pessoa.racaCor || "",
+
+      identidadeGenero:
+        pessoa.identidadeGenero || "",
+
+      racaCor:
+        pessoa.racaCor || "",
+
       spas: pessoa.spas || "",
-      tecnico: pessoa.tecnico || "",
-      intervencao: pessoa.intervencao || "",
-      territorio: pessoa.territorio || "",
-      insumos: pessoa.insumos || "",
-      cadUnico: pessoa.cadUnico || "",
+
+      tecnico: tecnicoLogado,
+
+      intervencao:
+        pessoa.intervencao || "",
+
+      territorio:
+        pessoa.territorio || "",
+
+      insumos:
+        pessoa.insumos || "",
+
+      cadUnico:
+        pessoa.cadUnico || "",
     });
 
     setSugestoes([]);
@@ -123,9 +144,7 @@ export default function Home() {
 
       data:
         formData.data ||
-        new Date().toLocaleDateString(
-          "pt-BR"
-        ),
+        dataPreenchimento,
     };
 
     setFormularios((prev) => [
@@ -133,7 +152,11 @@ export default function Home() {
       formularioComId,
     ]);
 
-    setFormData(initialForm);
+    setFormData({
+      ...initialForm,
+      tecnico: tecnicoLogado,
+      data: dataPreenchimento,
+    });
   };
 
   const enviarTodos = async () => {
@@ -141,6 +164,7 @@ export default function Home() {
       alert(
         "Nenhum formulário adicionado."
       );
+
       return;
     }
 
@@ -160,15 +184,86 @@ export default function Home() {
       setFormularios([]);
     } catch (error) {
       console.error(error);
+
       alert("Erro ao enviar");
     } finally {
       setLoading(false);
     }
   };
 
+  // =========================
+  // EFFECTS
+  // =========================
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    }
+  }, [authLoading, user, router]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      tecnico: tecnicoLogado,
+      data: dataPreenchimento,
+    }));
+  }, [
+    tecnicoLogado,
+    dataPreenchimento,
+  ]);
+
+  useEffect(() => {
+    carregarDados();
+  }, []);
+
+  useEffect(() => {
+    async function carregarTecnico() {
+      if (!user?.email) return;
+      
+      const tecnico =
+        await buscarTecnico(
+          user.email!
+        );
+
+      if (!tecnico?.ativo) {
+
+        alert(
+          "Usuário sem permissão."
+        );
+
+        await logout();
+
+        return;
+      }
+
+      setTecnicoLogado(
+        tecnico.nome
+      );
+    }
+
+    carregarTecnico();
+
+  }, [user]);
+
+  // =========================
+  // RETURNS CONDICIONAIS
+  // =========================
+
+  if (authLoading) {
+    return (
+      <p className="p-6">
+        Carregando...
+      </p>
+    );
+  }
+
+  if (!user) return null;
+
   return (
     <main className="min-h-screen bg-[#f4f0e8] p-6">
       <div className="max-w-4xl mx-auto">
+
+        {/* HEADER */}
         <div className="bg-[#ef7d00] rounded-3xl p-8 shadow-xl mb-6">
           <h1 className="text-4xl font-black text-white">
             Corra Pro Abraço
@@ -179,36 +274,80 @@ export default function Home() {
           </p>
         </div>
 
+        {/* DATA + LOGIN */}
+        <div className="bg-white rounded-2xl p-4 shadow mb-6 flex flex-col md:flex-row gap-4 md:items-end md:justify-between">
+          <div>
+            <label className="block mb-2 font-semibold text-gray-800">
+              Data de preenchimento
+            </label>
+
+            <input
+              type="date"
+              value={dataPreenchimento}
+              onChange={(e) =>
+                setDataPreenchimento(
+                  e.target.value
+                )
+              }
+              className="border-2 border-gray-200 rounded-2xl px-4 py-3 text-black"
+            />
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-500">
+              Técnico logado
+            </p>
+
+            <p className="font-bold text-gray-800">
+              {tecnicoLogado}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={logout}
+            className="bg-red-600 text-white px-5 py-3 rounded-2xl font-bold"
+          >
+            Sair
+          </button>
+        </div>
+
+        {/* CONTADOR */}
         <div className="bg-white rounded-2xl p-4 shadow mb-6 border-l-8 border-[#009640]">
           <p className="text-lg font-semibold text-gray-800">
             Formulários adicionados:
+
             <span className="text-[#ef7d00] ml-2">
               {formularios.length}
             </span>
           </p>
         </div>
 
+        {/* FORM */}
         <div className="bg-white rounded-3xl shadow-xl p-8">
-          <div className="relative mb-4">
-              <Input
-                label="Nome Completo"
-                name="nomeCompleto"
-                value={
-                  formData.nomeCompleto
-                }
-                onChange={
-                  handleChange
-                }
-              />
 
-              <SuggestionList
-                sugestoes={sugestoes}
-                selecionarPessoa={
-                  selecionarPessoa
-                }
-              />
+          <div className="relative mb-4">
+            <Input
+              label="Nome Completo"
+              name="nomeCompleto"
+              value={
+                formData.nomeCompleto
+              }
+              onChange={
+                handleChange
+              }
+            />
+
+            <SuggestionList
+              sugestoes={sugestoes}
+              selecionarPessoa={
+                selecionarPessoa
+              }
+            />
           </div>
+
           <div className="grid md:grid-cols-2 gap-4">
+
             <Input
               label="Idade"
               name="idade"
@@ -276,7 +415,7 @@ export default function Home() {
               }
               onChange={handleChange}
             />
-          
+
             <Input
               label="Insumos"
               name="insumos"
@@ -292,12 +431,14 @@ export default function Home() {
               options={[
                 "Sim",
                 "Não",
-                "NR"
+                "NR",
               ]}
             />
-          </div>          
+          </div>
 
+          {/* BOTÕES */}
           <div className="flex flex-col md:flex-row gap-4 mt-8">
+
             <button
               type="button"
               onClick={
@@ -307,24 +448,32 @@ export default function Home() {
             >
               Adicionar à Lista
             </button>
+
           </div>
 
-          <FormulariosTable formularios={formularios} />
+          {/* TABELA */}
+          <FormulariosTable
+            formularios={formularios}
+          />
 
+          {/* ENVIAR */}
           {formularios.length > 0 && (
             <div className="flex flex-col md:flex-row gap-4 mt-8">
+
               <button
-                  type="button"
-                  onClick={enviarTodos}
-                  disabled={loading}
-                  className="flex-1 bg-[#ef7d00] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition disabled:opacity-50"
-                >
-                  {loading
-                    ? "Enviando..."
-                    : "Enviar Todos"}
-                </button>
+                type="button"
+                onClick={enviarTodos}
+                disabled={loading}
+                className="flex-1 bg-[#ef7d00] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition disabled:opacity-50"
+              >
+                {loading
+                  ? "Enviando..."
+                  : "Enviar Todos"}
+              </button>
+
             </div>
-          )};
+          )}
+
         </div>
       </div>
     </main>
