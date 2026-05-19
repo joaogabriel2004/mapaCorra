@@ -76,9 +76,6 @@ export async function POST(
       response.status
     );
 
-    // NÃO tenta ler json da API
-    // porque ela pode devolver vazio
-
     return NextResponse.json({
       success: true,
     });
