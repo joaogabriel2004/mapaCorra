@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Input from "@/app/components/Input";
 import Select from "@/app/components/Select";
 import SuggestionList from "@/app/components/SuggestionList";
+import FormulariosTable from "@/app/components/FormulariosTable";
 
 import {
   buscarFormularios,
@@ -320,6 +321,8 @@ export default function Home() {
                 : "Enviar Todos"}
             </button>
           </div>
+
+          <FormulariosTable formularios={formularios} />
         </div>
       </div>
     </main>
