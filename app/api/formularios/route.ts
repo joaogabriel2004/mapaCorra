@@ -1,43 +1,96 @@
 import { NextResponse } from "next/server";
+import { google } from "googleapis";
 
-const GET_URL =
-  process.env.GET_API_URL!;
+const spreadsheetId =
+  process.env.GOOGLE_SHEET_ID!;
 
-const POST_URL =
-  process.env.POST_API_URL!;
+const clientEmail =
+  process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
 
-const GET_HEADERS = {
-  accessKey:
-    process.env.GET_ACCESS_KEY!,
+const privateKey = process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
 
-  secretKey:
-    process.env.GET_SECRET_KEY!,
-};
+const auth = new google.auth.JWT({
+  email: clientEmail,
+  key: privateKey,
+  scopes: [
+    "https://www.googleapis.com/auth/spreadsheets",
+  ],
+});
 
-const POST_HEADERS = {
-  accessKey:
-    process.env.POST_ACCESS_KEY!,
+const sheets = google.sheets({
+  version: "v4",
+  auth,
+});
 
-  secretKey:
-    process.env.POST_SECRET_KEY!,
-};
+const ABA_LEITURA = "Página5";
+
+const ABA_ENVIO = "Formulario";
+
+const COLUNAS_LEITURA = [
+  "id",
+  "nomeCompleto",
+  "idade",
+  "sexo",
+  "identidadeGenero",
+  "racaCor",
+  "spas",
+  "territorio",
+  "cadUnico",
+];
+
+const COLUNAS_ENVIO = [
+  "id",
+  "data",
+  "nomeCompleto",
+  "idade",
+  "sexo",
+  "identidadeGenero",
+  "racaCor",
+  "spas",
+  "tecnico",
+  "intervencao",
+  "territorio",
+  "insumos",
+  "cadUnico",
+];
 
 export async function GET() {
   try {
-    const response = await fetch(
-      GET_URL,
-      {
-        method: "GET",
-        headers: GET_HEADERS,
-      }
-    );
+    const response =
+      await sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: `'${ABA_LEITURA}'!A:I`,
+      });
 
-    const data =
-      await response.json();
+    const rows =
+      response.data.values || [];
 
-    return NextResponse.json(data);
+    const [, ...dados] = rows;
+
+    const data = dados.map((row) => {
+      const item: Record<
+        string,
+        string
+      > = {};
+
+      COLUNAS_LEITURA.forEach(
+        (coluna, index) => {
+          item[coluna] =
+            row[index] || "";
+        }
+      );
+
+      return item;
+    });
+
+    return NextResponse.json({
+      data,
+    });
   } catch (error) {
-    console.error(error);
+    console.error(
+      "ERRO GOOGLE SHEETS GET:",
+      error
+    );
 
     return NextResponse.json(
       {
@@ -58,51 +111,56 @@ export async function POST(
     const body =
       await req.json();
 
-<<<<<<< Updated upstream
-    const response = await fetch(
-      POST_URL,
-      {
-        method: "POST",
-        headers: {
-          ...POST_HEADERS,
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
+    const formularios =
+      Array.isArray(body)
+        ? body
+        : [body];
 
-    console.log(
-      "STATUS:",
-      response.status
-    );
-=======
-    const formularios = Array.isArray(body)
-      ? body
-      : [body];
+    const linhas =
+      formularios.map(
+        (formulario) =>
+          COLUNAS_ENVIO.map(
+            (coluna) =>
+              formulario[coluna] ||
+              ""
+          )
+      );
 
-    const linhas = formularios.map((formulario) =>
-      COLUNAS_ENVIO.map((coluna) => formulario[coluna] || "")
-    );
-
+    // ENVIA TODAS AS LINHAS
     await sheets.spreadsheets.values.append({
       spreadsheetId,
       range: `'${ABA_ENVIO}'!A:M`,
-      valueInputOption: "USER_ENTERED",
-      insertDataOption: "INSERT_ROWS",
+      valueInputOption:
+        "USER_ENTERED",
+      insertDataOption:
+        "INSERT_ROWS",
       requestBody: {
         values: linhas,
       },
     });
->>>>>>> Stashed changes
+
+    // SALVA QUANTIDADE EM REFERENCIAS!J2
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range:
+        "'Referencias'!J2",
+      valueInputOption:
+        "USER_ENTERED",
+      requestBody: {
+        values: [
+          [formularios.length],
+        ],
+      },
+    });
 
     return NextResponse.json({
       success: true,
-      total: formularios.length,
+      total:
+        formularios.length,
     });
   } catch (error) {
     console.error(
-      "ERRO:",
+      "ERRO GOOGLE SHEETS POST:",
       error
     );
 
