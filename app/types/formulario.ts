@@ -7,7 +7,6 @@ export type Formulario = {
   identidadeGenero: string;
   racaCor: string;
   spas: string;
-  tecnico: string;
   intervencao: string;
   territorio: string;
   insumos: string;
@@ -23,7 +22,6 @@ export const initialForm: Formulario = {
   identidadeGenero: "",
   racaCor: "",
   spas: "",
-  tecnico: "",
   intervencao: "",
   territorio: "",
   insumos: "",

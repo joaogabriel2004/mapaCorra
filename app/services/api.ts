@@ -37,3 +37,21 @@ export async function enviarFormulario(
 
   return response.json();
 }
+
+export async function enviarFormularios(
+  formularios: Formulario[]
+) {
+  const response = await fetch("/api/formularios", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formularios),
+  });
+
+  if (!response.ok) {
+    throw new Error("Erro ao enviar formulários");
+  }
+
+  return response.json();
+}

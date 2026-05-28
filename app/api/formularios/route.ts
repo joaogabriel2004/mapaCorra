@@ -58,6 +58,7 @@ export async function POST(
     const body =
       await req.json();
 
+<<<<<<< Updated upstream
     const response = await fetch(
       POST_URL,
       {
@@ -75,9 +76,29 @@ export async function POST(
       "STATUS:",
       response.status
     );
+=======
+    const formularios = Array.isArray(body)
+      ? body
+      : [body];
+
+    const linhas = formularios.map((formulario) =>
+      COLUNAS_ENVIO.map((coluna) => formulario[coluna] || "")
+    );
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: `'${ABA_ENVIO}'!A:M`,
+      valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
+      requestBody: {
+        values: linhas,
+      },
+    });
+>>>>>>> Stashed changes
 
     return NextResponse.json({
       success: true,
+      total: formularios.length,
     });
   } catch (error) {
     console.error(

@@ -11,7 +11,7 @@ import FormulariosTable from "@/app/components/FormulariosTable";
 
 import { buscarTecnico } from "@/app/services/tecnicos";
 
-import { buscarFormularios, enviarFormulario, } from "@/app/services/api";
+import { buscarFormularios, enviarFormularios, } from "@/app/services/api";
 
 import { Formulario, initialForm, } from "@/app/types/formulario";
 
@@ -92,59 +92,39 @@ export default function Home() {
 
       data: dataPreenchimento,
 
-      nomeCompleto:
-        pessoa.nomeCompleto || "",
+      nomeCompleto: pessoa.nomeCompleto || "",
 
-      idade:
-        String(pessoa.idade) || "",
+      idade: String(pessoa.idade) || "",
 
       sexo: pessoa.sexo || "",
 
-      identidadeGenero:
-        pessoa.identidadeGenero || "",
+      identidadeGenero: pessoa.identidadeGenero || "",
 
-      racaCor:
-        pessoa.racaCor || "",
+      racaCor: pessoa.racaCor || "",
 
       spas: pessoa.spas || "",
 
-      tecnico: tecnicoLogado,
+      intervencao: "1",
 
-      intervencao:
-        pessoa.intervencao || "",
+      territorio: pessoa.territorio || "",
 
-      territorio:
-        pessoa.territorio || "",
+      insumos: "2",
 
-      insumos:
-        pessoa.insumos || "",
-
-      cadUnico:
-        pessoa.cadUnico || "",
+      cadUnico: pessoa.cadUnico || "",
     });
 
     setSugestoes([]);
   };
 
   const adicionarFormulario = () => {
-    const idGerado = (
-      Date.now()
-        .toString()
-        .slice(-4) +
-      Math.floor(
-        Math.random() * 10
-      )
-    ).toString();
+    const idGerado = (Date.now().toString().slice(-4) + Math.floor(Math.random() * 10)).toString();
 
     const formularioComId = {
       ...formData,
 
-      id:
-        formData.id || idGerado,
+      id: formData.id || idGerado,
 
-      data:
-        formData.data ||
-        dataPreenchimento,
+      data: formData.data ||dataPreenchimento,
     };
 
     setFormularios((prev) => [
@@ -154,8 +134,10 @@ export default function Home() {
 
     setFormData({
       ...initialForm,
-      tecnico: tecnicoLogado,
       data: dataPreenchimento,
+      insumos: "2",
+      intervencao: "1",
+
     });
   };
 
@@ -171,11 +153,7 @@ export default function Home() {
     setLoading(true);
 
     try {
-      for (const formulario of formularios) {
-        await enviarFormulario(
-          formulario
-        );
-      }
+      await enviarFormularios(formularios);
 
       alert(
         "Todos enviados com sucesso!"
@@ -204,11 +182,11 @@ export default function Home() {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      tecnico: tecnicoLogado,
       data: dataPreenchimento,
+      insumos: "2",
+      intervencao: "1",
     }));
   }, [
-    tecnicoLogado,
     dataPreenchimento,
   ]);
 
@@ -351,7 +329,6 @@ export default function Home() {
             <Input
               label="Idade"
               name="idade"
-              type="number"
               value={formData.idade}
               onChange={handleChange}
             />
@@ -364,7 +341,7 @@ export default function Home() {
               options={[
                 "M",
                 "F",
-                "NR",
+                "NR",                
               ]}
             />
 
@@ -388,13 +365,6 @@ export default function Home() {
               label="SPAs"
               name="spas"
               value={formData.spas}
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Técnico"
-              name="tecnico"
-              value={formData.tecnico}
               onChange={handleChange}
             />
 
@@ -432,6 +402,7 @@ export default function Home() {
                 "Sim",
                 "Não",
                 "NR",
+                "NSA",
               ]}
             />
           </div>
