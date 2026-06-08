@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 
-const spreadsheetId =
-  process.env.GOOGLE_SHEET_ID!;
+const spreadsheetId = process.env.GOOGLE_SHEET_ID!;
 
-const clientEmail =
-  process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
+const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
 
 const privateKey = process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
 

@@ -81,10 +81,6 @@ export default function FormulariosTable({
                 </td>
 
                 <td className="p-3">
-                  {item.tecnico}
-                </td>
-
-                <td className="p-3">
                   {item.intervencao}
                 </td>
 
