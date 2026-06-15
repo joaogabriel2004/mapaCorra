@@ -20,7 +20,7 @@ const sheets = google.sheets({
   auth,
 });
 
-const ABA_LEITURA = "Página5";
+const ABA_LEITURA = "Registro";
 
 const ABA_ENVIO = "Formulario";
 
@@ -45,7 +45,6 @@ const COLUNAS_ENVIO = [
   "identidadeGenero",
   "racaCor",
   "spas",
-  "tecnico",
   "intervencao",
   "territorio",
   "insumos",
