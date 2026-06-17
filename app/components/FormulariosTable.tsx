@@ -22,31 +22,14 @@ export default function FormulariosTable({
               <th className="p-3 text-left">Nome</th>
               <th className="p-3 text-left">Idade</th>
               <th className="p-3 text-left">Sexo</th>
-              <th className="p-3 text-left">
-                Id. Gênero
-              </th>
-              <th className="p-3 text-left">
-                Raça/Cor
-              </th>
+              <th className="p-3 text-left">Id. Gênero</th>
+              <th className="p-3 text-left">Raça/Cor</th>
               <th className="p-3 text-left">SPAs</th>
-              <th className="p-3 text-left">
-                Técnico
-              </th>
-              <th className="p-3 text-left">
-                Intervenção
-              </th>
-              <th className="p-3 text-left">
-                Território
-              </th>
-              <th className="p-3 text-left">
-                Insumos
-              </th>
-              <th className="p-3 text-left">
-                CadÚnico
-              </th>
-              <th className="p-3 text-center">
-                Qnt
-              </th>
+              <th className="p-3 text-left">Intervenção</th>
+              <th className="p-3 text-left">Território</th>
+              <th className="p-3 text-left">Insumos</th>
+              <th className="p-3 text-left">CadÚnico</th>
+              <th className="p-3 text-center">Qnt</th>
             </tr>
           </thead>
 

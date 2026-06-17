@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 
-import Input from "@/app/components/Input";
-import Select from "@/app/components/Select";
-import SuggestionList from "@/app/components/SuggestionList";
 import FormulariosTable from "@/app/components/FormulariosTable";
+import  FormularioCentro  from "@/app/components/formularios/FormularioCentro";
+import  FormularioPraca  from "@/app/components/formularios/FormularioPraca";
 
 import { buscarTecnico } from "@/app/services/tecnicos";
 
 import { buscarFormularios, enviarFormularios, } from "@/app/services/api";
+import { buscarEquipe } from "@/app/services/equipes";
 
 import { Formulario, initialForm, } from "@/app/types/formulario";
 
@@ -33,15 +33,16 @@ export default function Home() {
   const [dataPreenchimento, setDataPreenchimento] = useState( new Date().toISOString().split("T")[0]);
 
   const [tecnicoLogado, setTecnicoLogado] = useState("");
+  const [equipe, setEquipe] = useState<any>(null);
 
   // =========================
   // FUNÇÕES
   // =========================
 
-  const carregarDados = async () => {
+  const carregarDados = async (spreadsheetId: string) => {
     try {
-      const data =
-        await buscarFormularios();
+
+      const data = await buscarFormularios(spreadsheetId);
 
       if (data?.data) {
         setDadosApi(data.data);
@@ -141,7 +142,7 @@ export default function Home() {
     });
   };
 
-  const enviarTodos = async () => {
+  const enviarTodos = async (spreadsheetId: string) => {
     if (formularios.length === 0) {
       alert(
         "Nenhum formulário adicionado."
@@ -153,7 +154,16 @@ export default function Home() {
     setLoading(true);
 
     try {
-      await enviarFormularios(formularios);
+      if (!equipe?.spreadsheetId) {
+        alert("Planilha da equipe não encontrada.");
+        return;
+      }
+
+      await enviarFormularios(
+        formularios,
+        equipe.spreadsheetId,
+        equipe.tipoFormulario
+      );
 
       alert(
         "Todos enviados com sucesso!"
@@ -191,36 +201,38 @@ export default function Home() {
   ]);
 
   useEffect(() => {
-    carregarDados();
-  }, []);
-
-  useEffect(() => {
     async function carregarTecnico() {
       if (!user?.email) return;
-      
-      const tecnico =
-        await buscarTecnico(
-          user.email!
-        );
+
+      const tecnico = await buscarTecnico(user.email);
 
       if (!tecnico?.ativo) {
-
-        alert(
-          "Usuário sem permissão."
-        );
-
+        alert("Usuário sem permissão.");
         await logout();
-
         return;
       }
 
-      setTecnicoLogado(
-        tecnico.nome
-      );
+      setTecnicoLogado(tecnico.nome);
+
+      const equipeEncontrada = await buscarEquipe(tecnico.equipeId);
+      setEquipe(equipeEncontrada);
+
+      if (!equipeEncontrada) {
+        alert("Equipe não encontrada.");
+        await logout();
+        return;
+      }
+
+      if (!equipeEncontrada.ativo) {
+        alert("Equipe inativa.");
+        await logout();
+        return;
+      }
+
+      await carregarDados(equipeEncontrada.spreadsheetId);
     }
 
     carregarTecnico();
-
   }, [user]);
 
   // =========================
@@ -248,7 +260,7 @@ export default function Home() {
           </h1>
 
           <p className="text-white mt-2 text-lg">
-            Formulário de Atendimento
+            Mapa de Campo da equipe {equipe?.nome}
           </p>
         </div>
 
@@ -273,11 +285,11 @@ export default function Home() {
 
           <div>
             <p className="text-sm text-gray-500">
-              Técnico logado
+              Olá,
             </p>
 
             <p className="font-bold text-gray-800">
-              {tecnicoLogado}
+              {tecnicoLogado} - {equipe?.nome}
             </p>
           </div>
 
@@ -304,108 +316,23 @@ export default function Home() {
         {/* FORM */}
         <div className="bg-white rounded-3xl shadow-xl p-8">
 
-          <div className="relative mb-4">
-            <Input
-              label="Nome Completo"
-              name="nomeCompleto"
-              value={
-                formData.nomeCompleto
-              }
-              onChange={
-                handleChange
-              }
+            {equipe?.nome === "Centro de Referência" && (
+              <FormularioCentro
+                formData={formData}
+                handleChange={handleChange}
+                sugestoes={sugestoes}
+                selecionarPessoa={selecionarPessoa}
             />
+            )}
 
-            <SuggestionList
-              sugestoes={sugestoes}
-              selecionarPessoa={
-                selecionarPessoa
-              }
-            />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-
-            <Input
-              label="Idade"
-              name="idade"
-              value={formData.idade}
-              onChange={handleChange}
-            />
-
-            <Select
-              label="Sexo"
-              name="sexo"
-              value={formData.sexo}
-              onChange={handleChange}
-              options={[
-                "M",
-                "F",
-                "NR",                
-              ]}
-            />
-
-            <Input
-              label="Id. Gênero"
-              name="identidadeGenero"
-              value={
-                formData.identidadeGenero
-              }
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Raça/Cor"
-              name="racaCor"
-              value={formData.racaCor}
-              onChange={handleChange}
-            />
-
-            <Input
-              label="SPAs"
-              name="spas"
-              value={formData.spas}
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Território"
-              name="territorio"
-              value={
-                formData.territorio
-              }
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Intervenção"
-              name="intervencao"
-              value={
-                formData.intervencao
-              }
-              onChange={handleChange}
-            />
-
-            <Input
-              label="Insumos"
-              name="insumos"
-              value={formData.insumos}
-              onChange={handleChange}
-            />
-
-            <Select
-              label="Cad. Único"
-              name="cadUnico"
-              value={formData.cadUnico}
-              onChange={handleChange}
-              options={[
-                "Sim",
-                "Não",
-                "NR",
-                "NSA",
-              ]}
-            />
-          </div>
+            {equipe?.nome === "Praça" && (
+              <FormularioPraca
+                formData={formData}
+                handleChange={handleChange}
+                sugestoes={sugestoes}
+                selecionarPessoa={selecionarPessoa}
+              />
+            )}
 
           {/* BOTÕES */}
           <div className="flex flex-col md:flex-row gap-4 mt-8">
@@ -433,7 +360,7 @@ export default function Home() {
 
               <button
                 type="button"
-                onClick={enviarTodos}
+                onClick={() => enviarTodos(equipe.spreadsheetId)}
                 disabled={loading}
                 className="flex-1 bg-[#ef7d00] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition disabled:opacity-50"
               >

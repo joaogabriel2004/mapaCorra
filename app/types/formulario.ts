@@ -11,6 +11,8 @@ export type Formulario = {
   territorio: string;
   insumos: string;
   cadUnico: string;
+
+  kitHigiene?: string;
 };
 
 export const initialForm: Formulario = {
@@ -26,4 +28,6 @@ export const initialForm: Formulario = {
   territorio: "",
   insumos: "",
   cadUnico: "",
+
+  kitHigiene: "",
 };
