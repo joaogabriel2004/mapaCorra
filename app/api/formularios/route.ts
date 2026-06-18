@@ -73,6 +73,11 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "spreadsheetId não informado" }, { status: 400 });
     }
 
+    console.log(
+      "SERVICE ACCOUNT:",
+      process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
+    );
+
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
       range: `'${ABA_LEITURA}'!A:I`,
