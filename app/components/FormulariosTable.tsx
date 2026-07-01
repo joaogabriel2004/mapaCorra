@@ -1,12 +1,13 @@
 import { Formulario } from "../types/formulario";
+import { ColunaFormulario } from "../config/formularios";
 
 type Props = {
   formularios: Formulario[];
+  colunas: ColunaFormulario[];
+  onRemove? : (index: number) => void;
 };
 
-export default function FormulariosTable({
-  formularios,
-}: Props) {
+export default function FormulariosTable({ formularios, colunas, onRemove }: Props) {
   if (formularios.length === 0) return null;
 
   return (
@@ -19,68 +20,37 @@ export default function FormulariosTable({
         <table className="w-full min-w-[1200px] border-collapse bg-white text-sm">
           <thead className="bg-[#009640] text-white">
             <tr>
-              <th className="p-3 text-left">Nome</th>
-              <th className="p-3 text-left">Idade</th>
-              <th className="p-3 text-left">Sexo</th>
-              <th className="p-3 text-left">Id. Gênero</th>
-              <th className="p-3 text-left">Raça/Cor</th>
-              <th className="p-3 text-left">SPAs</th>
-              <th className="p-3 text-left">Intervenção</th>
-              <th className="p-3 text-left">Território</th>
-              <th className="p-3 text-left">Insumos</th>
-              <th className="p-3 text-left">CadÚnico</th>
+              {colunas.map((coluna) => (
+                <th key={coluna.campo} className="p-3 text-left">
+                  {coluna.label}
+                </th>
+              ))}
+
               <th className="p-3 text-center">Qnt</th>
+              <th className="p-3 text-center">Ações</th>
             </tr>
           </thead>
 
           <tbody>
             {formularios.map((item, index) => (
-              <tr
-                key={index}
-                className="border-t border-gray-200 text-gray-800"
-              >
-                <td className="p-3">
-                  {item.nomeCompleto}
-                </td>
-
-                <td className="p-3">
-                  {item.idade}
-                </td>
-
-                <td className="p-3">
-                  {item.sexo}
-                </td>
-
-                <td className="p-3">
-                  {item.identidadeGenero}
-                </td>
-
-                <td className="p-3">
-                  {item.racaCor}
-                </td>
-
-                <td className="p-3">
-                  {item.spas}
-                </td>
-
-                <td className="p-3">
-                  {item.intervencao}
-                </td>
-
-                <td className="p-3">
-                  {item.territorio}
-                </td>
-
-                <td className="p-3">
-                  {item.insumos}
-                </td>
-
-                <td className="p-3">
-                  {item.cadUnico}
-                </td>
+              <tr key={index} className="border-t border-gray-200 text-gray-800">
+                {colunas.map((coluna) => (
+                  <td key={coluna.campo} className="p-3">
+                    {String(item[coluna.campo as keyof Formulario] || "")}
+                  </td>
+                ))}
 
                 <td className="p-3 text-center font-bold text-[#ef7d00]">
                   {index + 1}
+                </td>
+                <td className="p-3 text-center">
+                  <button
+                    type="button"
+                    onClick={() => onRemove?.(index)}
+                    className="text-red-600 font-bold hover:opacity-70"
+                  >
+                    Remover
+                  </button>
                 </td>
               </tr>
             ))}
@@ -88,11 +58,11 @@ export default function FormulariosTable({
 
           <tfoot className="bg-[#f4f0e8] text-left">
             <tr>
-              <td
-                colSpan={11}
-                className="p-4 text-left font-bold text-gray-800"
-              >
-                Total de pessoas: <span className="font-black text-[#ef7d00]">{formularios.length}</span>
+              <td colSpan={colunas.length + 2} className="p-4 text-left font-bold text-gray-800">
+                Total de pessoas:{" "}
+                <span className="font-black text-[#ef7d00]">
+                  {formularios.length}
+                </span>
               </td>
             </tr>
           </tfoot>

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 
+import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
+
 const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
 const privateKey = process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
 
@@ -30,39 +32,6 @@ const COLUNAS_LEITURA = [
   "territorio",
   "cadUnico",
 ];
-
-const COLUNAS_ENVIO: Record<string, string[]> = {
-  centro: [
-    "id",
-    "data",
-    "nomeCompleto",
-    "idade",
-    "sexo",
-    "identidadeGenero",
-    "racaCor",
-    "spas",
-    "intervencao",
-    "territorio",
-    "insumos",
-    "cadUnico",
-  ],
-
-  praca: [
-    "id",
-    "data",
-    "nomeCompleto",
-    "idade",
-    "sexo",
-    "identidadeGenero",
-    "racaCor",
-    "spas",
-    "intervencao",
-    "territorio",
-    "cadUnico",
-    "insumos",
-    "kitHigiene",
-  ],
-};
 
 export async function GET(req: Request) {
   try {
@@ -103,7 +72,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const spreadsheetId = body.spreadsheetId;
-    const tipoFormulario = body.tipoFormulario;
+    const tipoFormulario = body.tipoFormulario as TipoFormulario;
     const formularios = body.formularios;
 
     if (!spreadsheetId) {
@@ -118,15 +87,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Lista de formulários inválida" }, { status: 400 });
     }
 
-    const colunasEnvio = COLUNAS_ENVIO[tipoFormulario];
+    const configFormulario = CONFIG_FORMULARIOS[tipoFormulario];
 
-    if (!colunasEnvio) {
+    if (!configFormulario) {
       return NextResponse.json({ error: "Tipo de formulário inválido" }, { status: 400 });
     }
 
     const linhas = formularios.map((formulario: any) =>
-      colunasEnvio.map((coluna) => formulario[coluna] || "")
+      configFormulario.colunasEnvio.map((coluna) => formulario[coluna] || "")
     );
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `'${ABA_REFERENCIAS}'!J2`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: [[formularios.length]],
+      },
+    });
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
@@ -135,15 +113,6 @@ export async function POST(req: Request) {
       insertDataOption: "INSERT_ROWS",
       requestBody: {
         values: linhas,
-      },
-    });
-
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: `'${ABA_REFERENCIAS}'!J2`,
-      valueInputOption: "USER_ENTERED",
-      requestBody: {
-        values: [[formularios.length]],
       },
     });
 

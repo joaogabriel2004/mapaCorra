@@ -115,11 +115,16 @@ export default function FormularioPraca({
           onChange={handleChange}
         />
 
-        <Input
+        <Select
           label="Kit Higiene"
           name="kitHigiene"
           value={formData.kitHigiene}
           onChange={handleChange}
+          options={[
+            "Sim",
+            "Não",
+            "NSA",
+          ]}
         />
       </div>
 

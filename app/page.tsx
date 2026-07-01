@@ -15,6 +15,8 @@
 
   import { Formulario, initialForm, } from "@/app/types/formulario";
 
+  import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
+
   export default function Home() {
     const router = useRouter();
 
@@ -112,6 +114,8 @@
         insumos: "2",
 
         cadUnico: pessoa.cadUnico || "",
+
+        kitHigiene: "",
       });
 
       setSugestoes([]);
@@ -139,6 +143,7 @@
 
       setFormData({
         ...initialForm,
+        territorio: formData.territorio,
         data: dataPreenchimento,
         insumos: "2",
         intervencao: "1",
@@ -181,6 +186,12 @@
       } finally {
         setLoading(false);
       }
+    };
+
+    const removerFormulario = (indexParaRemover: number) => {
+      setFormularios((prev) =>
+        prev.filter((_, index) => index !== indexParaRemover)
+      );
     };
 
     // =========================
@@ -356,6 +367,12 @@
             {/* TABELA */}
             <FormulariosTable
               formularios={formularios}
+              colunas={
+                equipe?.tipoFormulario
+                  ? CONFIG_FORMULARIOS[equipe.tipoFormulario as TipoFormulario]?.colunasTabela || []
+                  : []
+              }
+              onRemove={removerFormulario}
             />
 
             {/* ENVIAR */}
