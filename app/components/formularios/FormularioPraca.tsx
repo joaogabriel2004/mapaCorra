@@ -101,8 +101,8 @@ export default function FormularioPraca({
           value={formData.cadUnico}
           onChange={handleChange}
           options={[
-            "Sim",
-            "Não",
+            "SIM",
+            "NÃO",
             "NR",
             "NSA",
           ]}
@@ -121,8 +121,8 @@ export default function FormularioPraca({
           value={formData.kitHigiene}
           onChange={handleChange}
           options={[
-            "Sim",
-            "Não",
+            "SIM",
+            "NÃO",
             "NSA",
           ]}
         />

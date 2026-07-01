@@ -101,8 +101,8 @@ export default function FormularioCentro({
           value={formData.cadUnico}
           onChange={handleChange}
           options={[
-            "Sim",
-            "Não",
+            "SIM",
+            "NÃO",
             "NR",
             "NSA",
           ]}
