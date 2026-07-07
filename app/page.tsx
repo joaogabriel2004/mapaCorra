@@ -16,6 +16,7 @@
   import { Formulario, initialForm, } from "@/app/types/formulario";
 
   import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
+import FormularioExtensao from "./components/formularios/FormularioExtensao";
 
   export default function Home() {
     const router = useRouter();
@@ -347,6 +348,15 @@
                   sugestoes={sugestoes}
                   selecionarPessoa={selecionarPessoa}
                 />
+              )}
+
+              {equipe?.nome === "Extensão" && (
+                <FormularioExtensao 
+                formData={formData }
+                handleChange={handleChange}
+                sugestoes={sugestoes}
+                selecionarPessoa={selecionarPessoa}
+              />
               )}
 
             {/* BOTÕES */}
