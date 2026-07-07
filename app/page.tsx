@@ -16,7 +16,7 @@
   import { Formulario, initialForm, } from "@/app/types/formulario";
 
   import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
-import FormularioExtensao from "./components/formularios/FormularioExtensao";
+  import FormularioExtensao from "./components/formularios/FormularioExtensao";
 
   export default function Home() {
     const router = useRouter();
