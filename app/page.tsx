@@ -88,35 +88,27 @@
       }
     };
 
-    const selecionarPessoa = (
-      pessoa: Formulario
-    ) => {
+    const selecionarPessoa = (pessoa: Formulario) => {
+      const tiposQueUsamTerritorioDoAssistido = ["centro", "vac"];
+      const tipoFormulario = equipe?.tipoFormulario || "";
+      const usaTerritorioDoAssistido = tiposQueUsamTerritorioDoAssistido.includes(tipoFormulario);
+      const territorioAtual = formData.territorio;
+
       setFormData({
         id: String(pessoa.id),
-
         data: dataPreenchimento,
-
         nomeCompleto: pessoa.nomeCompleto || "",
-
         idade: String(pessoa.idade) || "",
-
         sexo: pessoa.sexo || "",
-
         identidadeGenero: pessoa.identidadeGenero || "",
-
         racaCor: pessoa.racaCor || "",
-
         spas: pessoa.spas || "",
-
         intervencao: "1",
-
-        territorio: pessoa.territorio || "",
-
+        territorio: usaTerritorioDoAssistido ? pessoa.territorio || "" : territorioAtual,
         insumos: "2",
-
         cadUnico: pessoa.cadUnico || "",
-
         kitHigiene: "",
+        territorioEspecifico: "",
       });
 
       setSugestoes([]);
