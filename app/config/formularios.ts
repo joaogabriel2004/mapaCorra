@@ -87,9 +87,10 @@ export const CONFIG_FORMULARIOS: Record<
       "racaCor",
       "spas",
       "intervencao",
-      "territorio",
       "insumos",
       "cadUnico",
+      "territorioEspecifico",
+      "territorio",
     ],
     colunasTabela: [
       { campo: "id", label: "ID" },
@@ -104,6 +105,7 @@ export const CONFIG_FORMULARIOS: Record<
       { campo: "territorio", label: "Território" },
       { campo: "insumos", label: "Insumos" },
       { campo: "cadUnico", label: "Cad. Único" },
+      { campo: "territorioEspecifico", label: "Território de Referência" },
     ],
   },
 };

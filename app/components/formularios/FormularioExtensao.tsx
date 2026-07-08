@@ -117,6 +117,13 @@ export default function FormularioExtensao({
           ]}
         />
 
+        <Input
+          label="Território de Referência"
+          name="territorioEspecifico"
+          value={formData.territorioEspecifico}
+          onChange={handleChange}
+        />
+
       </div>
 
     </div>

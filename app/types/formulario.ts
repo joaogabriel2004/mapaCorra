@@ -13,6 +13,7 @@ export type Formulario = {
   cadUnico: string;
 
   kitHigiene?: string;
+  territorioEspecifico?: string;
 };
 
 export const initialForm: Formulario = {
@@ -30,4 +31,5 @@ export const initialForm: Formulario = {
   cadUnico: "",
 
   kitHigiene: "",
+  territorioEspecifico: "",
 };
