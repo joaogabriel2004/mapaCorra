@@ -7,6 +7,7 @@
   import FormulariosTable from "@/app/components/FormulariosTable";
   import  FormularioCentro  from "@/app/components/formularios/FormularioCentro";
   import  FormularioPraca  from "@/app/components/formularios/FormularioPraca";
+  import  FormularioMares  from "@/app/components/formularios/FormularioMares";
 
   import { buscarTecnico } from "@/app/services/tecnicos";
 
@@ -89,60 +90,74 @@
     };
 
     const selecionarPessoa = (pessoa: Formulario) => {
-      const tiposQueUsamTerritorioDoAssistido = ["centro", "vac"];
-      const tipoFormulario = equipe?.tipoFormulario || "";
-      const usaTerritorioDoAssistido = tiposQueUsamTerritorioDoAssistido.includes(tipoFormulario);
-      const territorioAtual = formData.territorio;
+    const tiposQueUsamTerritorioDoAssistido = ["centro", "vac"];
+    const tipoFormulario = equipe?.tipoFormulario || "";
 
-      setFormData({
-        id: String(pessoa.id),
-        data: dataPreenchimento,
-        nomeCompleto: pessoa.nomeCompleto || "",
-        idade: String(pessoa.idade) || "",
-        sexo: pessoa.sexo || "",
-        identidadeGenero: pessoa.identidadeGenero || "",
-        racaCor: pessoa.racaCor || "",
-        spas: pessoa.spas || "",
-        intervencao: "1",
-        territorio: usaTerritorioDoAssistido ? pessoa.territorio || "" : territorioAtual,
-        insumos: "2",
-        cadUnico: pessoa.cadUnico || "",
-        kitHigiene: "",
-        territorioEspecifico: "",
-      });
+    let territorio = formData.territorio;
 
-      setSugestoes([]);
+    if (tipoFormulario === "mares") {
+      territorio = "Mares";
+    } else if (tiposQueUsamTerritorioDoAssistido.includes(tipoFormulario)) {
+      territorio = pessoa.territorio || "";
+    }
+
+    setFormData({
+      id: String(pessoa.id),
+      data: dataPreenchimento,
+      nomeCompleto: pessoa.nomeCompleto || "",
+      idade: String(pessoa.idade) || "",
+      sexo: pessoa.sexo || "",
+      identidadeGenero: pessoa.identidadeGenero || "",
+      racaCor: pessoa.racaCor || "",
+      spas: pessoa.spas || "",
+      intervencao: "1",
+      territorio,
+      insumos: "2",
+      cadUnico: pessoa.cadUnico || "",
+      kitHigiene: "",
+      territorioEspecifico: "",
+      atividadeExterna: "NSA",
+      sanitario: "",
+      banho: "",
+    });
+
+    setSugestoes([]);
+  };
+
+  const adicionarFormulario = () => {
+    if (!formData.nomeCompleto) {
+      return;
+    }
+
+    const idGerado =
+      Date.now().toString().slice(-4) +
+      Math.floor(Math.random() * 10).toString();
+
+    const formularioComId = {
+      ...formData,
+      id: formData.id || idGerado,
+      data: formData.data || dataPreenchimento,
     };
 
-    const adicionarFormulario = () => {
-      if( !formData.nomeCompleto ) {
-        return;
-      }
+    setFormularios((prev) => [
+      ...prev,
+      formularioComId,
+    ]);
 
-      const idGerado = (Date.now().toString().slice(-4) + Math.floor(Math.random() * 10)).toString();
+    const territorio =
+      equipe?.tipoFormulario === "mares"
+        ? "Mares"
+        : formData.territorio;
 
-      const formularioComId = {
-        ...formData,
-
-        id: formData.id || idGerado,
-
-        data: formData.data ||dataPreenchimento,
-      };
-
-      setFormularios((prev) => [
-        ...prev,
-        formularioComId,
-      ]);
-
-      setFormData({
-        ...initialForm,
-        territorio: formData.territorio,
-        data: dataPreenchimento,
-        insumos: "2",
-        intervencao: "1",
-
-      });
-    };
+    setFormData({
+      ...initialForm,
+      territorio,
+      data: dataPreenchimento,
+      insumos: "2",
+      intervencao: "1",
+      atividadeExterna: "NSA",
+    });
+  };
 
     const enviarTodos = async (spreadsheetId: string) => {
       if (formularios.length === 0) {
@@ -203,6 +218,7 @@
         data: dataPreenchimento,
         insumos: "2",
         intervencao: "1",
+        atividadeExterna: "NSA",
       }));
     }, [
       dataPreenchimento,
@@ -344,7 +360,16 @@
 
               {equipe?.nome === "Extensão" && (
                 <FormularioExtensao 
-                formData={formData }
+                formData={formData}
+                handleChange={handleChange}
+                sugestoes={sugestoes}
+                selecionarPessoa={selecionarPessoa}
+              />
+              )}
+
+              {equipe?.nome === "Mares" && (
+                <FormularioMares 
+                formData={formData}
                 handleChange={handleChange}
                 sugestoes={sugestoes}
                 selecionarPessoa={selecionarPessoa}

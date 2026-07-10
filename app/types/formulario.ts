@@ -14,6 +14,9 @@ export type Formulario = {
 
   kitHigiene?: string;
   territorioEspecifico?: string;
+  atividadeExterna?: string;
+  sanitario?: string;
+  banho?: string;
 };
 
 export const initialForm: Formulario = {
@@ -32,4 +35,7 @@ export const initialForm: Formulario = {
 
   kitHigiene: "",
   territorioEspecifico: "",
+  atividadeExterna: "",
+  sanitario: "",
+  banho: "",
 };

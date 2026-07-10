@@ -1,4 +1,4 @@
-export type TipoFormulario = "centro" | "praca" | "extensao";
+export type TipoFormulario = "centro" | "praca" | "extensao" | "mares";
 
 export type ColunaFormulario = {
   campo: string;
@@ -108,4 +108,44 @@ export const CONFIG_FORMULARIOS: Record<
       { campo: "territorioEspecifico", label: "Território de Referência" },
     ],
   },
+
+  mares: {
+    colunasEnvio: [
+      "id",
+      "data",
+      "nomeCompleto",
+      "idade",
+      "sexo",
+      "identidadeGenero",
+      "racaCor",
+      "spas",
+      "atividadeExterna",
+      "intervencao",
+      "insumos",
+      "sanitario",
+      "banho",
+      "kitHigiene",
+      "cadUnico",
+      "territorio",
+    ],
+    colunasTabela: [
+      { campo: "id", label: "ID" },
+      { campo: "data", label: "Data" },
+      { campo: "nomeCompleto", label: "Nome Completo" },
+      { campo: "idade", label: "Idade" },
+      { campo: "sexo", label: "Sexo" },
+      { campo: "identidadeGenero", label: "Id. Gênero" },
+      { campo: "racaCor", label: "Raça/Cor" },
+      { campo: "spas", label: "SPAs" },
+      { campo: "atividadeExterna", label: "Atividade Externa" },
+      { campo: "intervencao", label: "Intervenção" },
+      { campo: "insumos", label: "Insumos" },
+      { campo: "sanitario", label: "Sanitário" },
+      { campo: "banho", label: "Banho" },
+      { campo: "kitHigiene", label: "Kit Higiene" },
+      { campo: "cadUnico", label: "Cad. Único" },
+      { campo: "territorio", label: "Território" },
+      
+    ],
+  }
 };
