@@ -6,7 +6,7 @@ export type Formulario = {
   sexo: string;
   identidadeGenero: string;
   racaCor: string;
-  spas: string;
+  spas?: string;
   intervencao: string;
   territorio: string;
   insumos: string;
@@ -17,6 +17,9 @@ export type Formulario = {
   atividadeExterna?: string;
   sanitario?: string;
   banho?: string;
+  tipoAssistido?: string;
+  resultadoAudiencia?: string;
+  contato?: string;
 };
 
 export const initialForm: Formulario = {
@@ -38,4 +41,7 @@ export const initialForm: Formulario = {
   atividadeExterna: "",
   sanitario: "",
   banho: "",
+  tipoAssistido: "",
+  resultadoAudiencia: "",
+  contato: "",
 };

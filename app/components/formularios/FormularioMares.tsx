@@ -103,7 +103,6 @@ export default function FormularioMares({
           options={[
             "SIM",
             "NÃO",
-            "NR",
             "NSA",
           ]}
         />
@@ -116,13 +115,12 @@ export default function FormularioMares({
           options={[
             "SIM",
             "NÃO",
-            "NR",
             "NSA",
           ]}
         />
 
         <Select
-          label="Kit Higien"
+          label="Kit Higiene"
           name="kitHigiene"
           value={formData.kitHigiene}
           onChange={handleChange}

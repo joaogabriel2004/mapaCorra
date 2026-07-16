@@ -1,4 +1,4 @@
-export type TipoFormulario = "centro" | "praca" | "extensao" | "mares";
+export type TipoFormulario = "centro" | "praca" | "extensao" | "mares" | "vac";
 
 export type ColunaFormulario = {
   campo: string;
@@ -146,6 +146,41 @@ export const CONFIG_FORMULARIOS: Record<
       { campo: "cadUnico", label: "Cad. Único" },
       { campo: "territorio", label: "Território" },
       
+    ],
+  },
+
+  vac: {
+    colunasEnvio: [
+      "id",
+      "data",
+      "nomeCompleto",
+      "idade",
+      "sexo",
+      "identidadeGenero",
+      "racaCor",
+      "tipoAssistido",
+      "intervencao",
+      "territorio",
+      "insumos",
+      "cadUnico",
+      "resultadoAudiencia",
+      "contato",
+    ],
+    colunasTabela: [
+      { campo: "id", label: "ID" },
+      { campo: "data", label: "Data" },
+      { campo: "nomeCompleto", label: "Nome Completo" },
+      { campo: "idade", label: "Idade" },
+      { campo: "sexo", label: "Sexo" },
+      { campo: "identidadeGenero", label: "Id. Gênero" },
+      { campo: "racaCor", label: "Raça/Cor" },
+      { campo: "tipoAssistido", label: "Tipo de Assistido" },
+      { campo: "intervencao", label: "Intervenção" },
+      { campo: "territorio", label: "Território" },
+      { campo: "insumos", label: "Insumos" },
+      { campo: "cadUnico", label: "Cad. Único" },
+      { campo: "resultadoAudiencia", label: "Resultado da Audiência" },
+      { campo: "contato", label: "Contato" },
     ],
   }
 };

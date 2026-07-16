@@ -68,16 +68,9 @@ export default function FormularioVac({
         />
 
         <Input
-          label="SPAs"
-          name="spas"
-          value={formData.spas}
-          onChange={handleChange}
-        />
-
-        <Input
-          label="Território"
-          name="territorio"
-          value={formData.territorio}
+          label="Tipo do Assistido"
+          name="tipoAssistido"
+          value={formData.tipoAssistido}
           onChange={handleChange}
         />
 
@@ -85,6 +78,13 @@ export default function FormularioVac({
           label="Intervenção"
           name="intervencao"
           value={formData.intervencao}
+          onChange={handleChange}
+        />
+
+        <Input
+          label="Território"
+          name="territorio"
+          value={formData.territorio}
           onChange={handleChange}
         />
 
@@ -106,6 +106,20 @@ export default function FormularioVac({
             "NR",
             "NSA",
           ]}
+        />
+
+        <Input
+          label="Resultado da Audiência"
+          name="resultadoAudiencia"
+          value={formData.resultadoAudiencia}
+          onChange={handleChange}
+        />
+
+        <Input
+          label="Contato"
+          name="contato"
+          value={formData.contato}
+          onChange={handleChange}
         />
       </div>
 

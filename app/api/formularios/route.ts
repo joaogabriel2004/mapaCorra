@@ -97,15 +97,6 @@ export async function POST(req: Request) {
       configFormulario.colunasEnvio.map((coluna) => formulario[coluna] || "")
     );
 
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: `'${ABA_REFERENCIAS}'!J2`,
-      valueInputOption: "USER_ENTERED",
-      requestBody: {
-        values: [[formularios.length]],
-      },
-    });
-
     await sheets.spreadsheets.values.append({
       spreadsheetId,
       range: `'${ABA_ENVIO}'!A:Z`,

@@ -8,16 +8,16 @@
   import  FormularioCentro  from "@/app/components/formularios/FormularioCentro";
   import  FormularioPraca  from "@/app/components/formularios/FormularioPraca";
   import  FormularioMares  from "@/app/components/formularios/FormularioMares";
+  import FormularioExtensao from "@/app/components/formularios/FormularioExtensao";
+  import FormularioVac from "@/app/components/formularios/FormularioVac";
 
   import { buscarTecnico } from "@/app/services/tecnicos";
-
   import { buscarFormularios, enviarFormularios, } from "@/app/services/api";
   import { buscarEquipe } from "@/app/services/equipes";
 
   import { Formulario, initialForm, } from "@/app/types/formulario";
 
   import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
-  import FormularioExtensao from "./components/formularios/FormularioExtensao";
 
   export default function Home() {
     const router = useRouter();
@@ -119,6 +119,9 @@
       atividadeExterna: "NSA",
       sanitario: "",
       banho: "",
+      tipoAssistido: pessoa.tipoAssistido || "",
+      resultadoAudiencia: pessoa.resultadoAudiencia || "",
+      contato: pessoa.contato || "",
     });
 
     setSugestoes([]);
@@ -369,6 +372,15 @@
 
               {equipe?.nome === "Mares" && (
                 <FormularioMares 
+                formData={formData}
+                handleChange={handleChange}
+                sugestoes={sugestoes}
+                selecionarPessoa={selecionarPessoa}
+              />
+              )}
+
+              {equipe?.nome === "VAC" && (
+                <FormularioVac 
                 formData={formData}
                 handleChange={handleChange}
                 sugestoes={sugestoes}
