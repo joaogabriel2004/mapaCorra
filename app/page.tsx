@@ -5,18 +5,17 @@
   import { useAuth } from "@/app/context/AuthContext";
 
   import FormulariosTable from "@/app/components/FormulariosTable";
-  import  FormularioCentro  from "@/app/components/formularios/FormularioCentro";
-  import  FormularioPraca  from "@/app/components/formularios/FormularioPraca";
-  import  FormularioMares  from "@/app/components/formularios/FormularioMares";
+  import FormularioCentro  from "@/app/components/formularios/FormularioCentro";
+  import FormularioPraca  from "@/app/components/formularios/FormularioPraca";
+  import FormularioMares  from "@/app/components/formularios/FormularioMares";
   import FormularioExtensao from "@/app/components/formularios/FormularioExtensao";
   import FormularioVac from "@/app/components/formularios/FormularioVac";
+  import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
   import { buscarTecnico } from "@/app/services/tecnicos";
   import { buscarFormularios, enviarFormularios, } from "@/app/services/api";
   import { buscarEquipe } from "@/app/services/equipes";
-
   import { Formulario, initialForm, } from "@/app/types/formulario";
-
   import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
 
   export default function Home() {
@@ -38,6 +37,9 @@
 
     const [tecnicoLogado, setTecnicoLogado] = useState("");
     const [equipe, setEquipe] = useState<any>(null);
+
+    const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
+
 
     // =========================
     // FUNÇÕES
@@ -90,84 +92,115 @@
     };
 
     const selecionarPessoa = (pessoa: Formulario) => {
-    const tiposQueUsamTerritorioDoAssistido = ["centro", "vac"];
-    const tipoFormulario = equipe?.tipoFormulario || "";
+      const jaAdicionado = formularios.some(
+        (item) => String(item.id) === String(pessoa.id)
+      );
 
-    let territorio = formData.territorio;
+      if (jaAdicionado) {
+        alert(`A pessoa "${pessoa.nomeCompleto}" já foi adicionada à lista!`);
+        setSugestoes([]); // Limpa a lista de sugestões para fechar o menu
+        return;
+      }
 
-    if (tipoFormulario === "mares") {
-      territorio = "Mares";
-    } else if (tiposQueUsamTerritorioDoAssistido.includes(tipoFormulario)) {
-      territorio = pessoa.territorio || "";
-    }
+      const tiposQueUsamTerritorioDoAssistido = ["centro", "vac"];
+      const tipoFormulario = equipe?.tipoFormulario || "";
 
-    setFormData({
-      id: String(pessoa.id),
-      data: dataPreenchimento,
-      nomeCompleto: pessoa.nomeCompleto || "",
-      idade: String(pessoa.idade) || "",
-      sexo: pessoa.sexo || "",
-      identidadeGenero: pessoa.identidadeGenero || "",
-      racaCor: pessoa.racaCor || "",
-      spas: pessoa.spas || "",
-      intervencao: "1",
-      territorio,
-      insumos: "2",
-      cadUnico: pessoa.cadUnico || "",
-      kitHigiene: "",
-      territorioEspecifico: "",
-      atividadeExterna: "NSA",
-      sanitario: "",
-      banho: "",
-      tipoAssistido: pessoa.tipoAssistido || "",
-      resultadoAudiencia: pessoa.resultadoAudiencia || "",
-      contato: pessoa.contato || "",
-    });
+      let territorio = formData.territorio;
 
-    setSugestoes([]);
-  };
+      if (tipoFormulario === "mares") {
+        territorio = "Mares";
+      } else if (tiposQueUsamTerritorioDoAssistido.includes(tipoFormulario)) {
+        territorio = pessoa.territorio || "";
+      }
 
-  const adicionarFormulario = () => {
-    if (!formData.nomeCompleto) {
-      return;
-    }
+      setFormData({
+        id: String(pessoa.id),
+        data: dataPreenchimento,
+        nomeCompleto: pessoa.nomeCompleto || "",
+        idade: String(pessoa.idade) || "",
+        sexo: pessoa.sexo || "",
+        identidadeGenero: pessoa.identidadeGenero || "",
+        racaCor: pessoa.racaCor || "",
+        spas: pessoa.spas || "",
+        intervencao: "1",
+        territorio,
+        insumos: "2",
+        cadUnico: pessoa.cadUnico || "",
+        kitHigiene: "",
+        territorioEspecifico: "",
+        atividadeExterna: "NSA",
+        sanitario: "",
+        banho: "",
+        tipoAssistido: pessoa.tipoAssistido || "",
+        resultadoAudiencia: pessoa.resultadoAudiencia || "",
+        contato: pessoa.contato || "",
+      });
 
-    const idGerado =
-      Date.now().toString().slice(-4) +
-      Math.floor(Math.random() * 10).toString();
-
-    const formularioComId = {
-      ...formData,
-      id: formData.id || idGerado,
-      data: formData.data || dataPreenchimento,
+      setSugestoes([]);
     };
 
-    setFormularios((prev) => [
-      ...prev,
-      formularioComId,
-    ]);
+    const validarFormulario = () => {
+      if (!equipe) return false;
 
-    const territorio =
-      equipe?.tipoFormulario === "mares"
-        ? "Mares"
-        : formData.territorio;
+      const tipoFormulario = equipe.tipoFormulario as TipoFormulario;
 
-    setFormData({
-      ...initialForm,
-      territorio,
-      data: dataPreenchimento,
-      insumos: "2",
-      intervencao: "1",
-      atividadeExterna: "NSA",
-    });
-  };
+      const campos =
+        CONFIG_FORMULARIOS[tipoFormulario].colunasTabela;
 
-    const enviarTodos = async (spreadsheetId: string) => {
-      if (formularios.length === 0) {
-        alert(
-          "Nenhum formulário adicionado."
+      const campoVazio = campos.find(({ campo }) => {
+        const valor = (formData as Record<string, unknown>)[campo];
+
+        return (
+          valor === undefined ||
+          valor === null ||
+          String(valor).trim() === ""
         );
+      });
 
+      if (campoVazio) {
+        alert(`Preencha o campo "${campoVazio.label}".`);
+        return false;
+      }
+
+      return true;
+    };
+
+    const adicionarFormulario = () => {
+      if (!validarFormulario()) return;
+
+      const idGerado =
+        Date.now().toString().slice(-4) +
+        Math.floor(Math.random() * 10).toString();
+
+      const formularioComId = {
+        ...formData,
+        id: formData.id || idGerado,
+        data: formData.data || dataPreenchimento,
+      };
+
+      setFormularios((prev) => [
+        ...prev,
+        formularioComId,
+      ]);
+
+      const territorio =
+        equipe?.tipoFormulario === "mares"
+          ? "Mares"
+          : formData.territorio;
+
+      setFormData({
+        ...initialForm,
+        territorio,
+        data: dataPreenchimento,
+        insumos: "2",
+        intervencao: "1",
+        atividadeExterna: "NSA",
+      });
+    };
+
+    const enviarTodos = async (dataFinal: string) => {
+      if (formularios.length === 0) {
+        alert("Nenhum formulário adicionado.");
         return;
       }
 
@@ -179,20 +212,23 @@
           return;
         }
 
+        // Atualiza a data de TODOS os formulários com a data confirmada na modal
+        const formulariosComDataAtualizada = formularios.map((form) => ({
+          ...form,
+          data: dataFinal,
+        }));
+
         await enviarFormularios(
-          formularios,
+          formulariosComDataAtualizada,
           equipe.spreadsheetId,
           equipe.tipoFormulario
         );
 
-        alert(
-          "Todos enviados com sucesso!"
-        );
+        alert("Todos enviados com sucesso!");
 
         setFormularios([]);
       } catch (error) {
         console.error(error);
-
         alert("Erro ao enviar");
       } finally {
         setLoading(false);
@@ -420,7 +456,7 @@
 
                 <button
                   type="button"
-                  onClick={() => enviarTodos(equipe.spreadsheetId)}
+                  onClick={() => setMostrarConfirmacao(true)}
                   disabled={loading}
                   className="flex-1 bg-[#ef7d00] hover:opacity-90 text-white font-bold py-4 rounded-2xl transition disabled:opacity-50"
                 >
@@ -433,6 +469,20 @@
             )}
 
           </div>
+
+          <ModalConfirmacao
+            aberto={mostrarConfirmacao}
+            data={dataPreenchimento}
+            equipe={equipe?.nome || ""}
+            planilha={equipe?.nomePlanilha || ""}
+            territorio={formData.territorio}
+            formularios={formularios}
+            onCancelar={() => setMostrarConfirmacao(false)}
+            onConfirmar={async (dataEditada) => {
+              setMostrarConfirmacao(false);
+              await enviarTodos(dataEditada);
+            }}
+          />
         </div>
       </main>
     );
