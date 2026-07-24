@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
+import { toast, Toaster } from "react-hot-toast";
 
 import FormulariosTable from "@/app/components/FormulariosTable";
 import FormularioCentro from "@/app/components/formularios/FormularioCentro";
@@ -28,6 +29,7 @@ export default function Home() {
   const [dadosApi, setDadosApi] = useState<Formulario[]>([]);
   const [sugestoes, setSugestoes] = useState<Formulario[]>([]);
   const [loading, setLoading] = useState(false);
+  const [dadosLoading, setDadosLoading] = useState(true);
   const [dataPreenchimento, setDataPreenchimento] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -87,7 +89,14 @@ export default function Home() {
     );
 
     if (jaAdicionado) {
-      alert(`A pessoa "${pessoa.nomeCompleto}" já foi adicionada à lista!`);
+      toast(`A pessoa "${pessoa.nomeCompleto}" já está na lista!`, {
+        icon: '⚠️',
+        style: {
+          border: '2 border #F09A06',
+          background: '#FFFBEB',
+          color: '#B45309',
+        },
+      });
       setSugestoes([]);
       return;
     }
@@ -148,7 +157,14 @@ export default function Home() {
     });
 
     if (campoVazio) {
-      alert(`Preencha o campo "${campoVazio.label}".`);
+      toast(`Preencha o campo "${campoVazio.label}`, {
+        icon: '⚠️',
+        style: {
+          border: '2 border #F09A06',
+          background: '#FFFBEB',
+          color: '#B45309',
+        },
+      });
       return false;
     }
 
@@ -176,7 +192,6 @@ export default function Home() {
   const adicionarFormulario = () => {
     if (!validarFormulario()) return;
 
-    // 1. SE ESTIVER EM MODO DE EDIÇÃO: Atualiza a linha existente
     if (indexEditando !== null) {
       setFormularios((prev) => {
         const listaAtualizada = [...prev];
@@ -188,7 +203,6 @@ export default function Home() {
       return;
     }
 
-    // 2. SE ESTIVER ADICIONANDO UM NOVO: Valida duplicação manual
     const jaExiste = formularios.some(
       (f) =>
         f.nomeCompleto.toLowerCase().trim() ===
@@ -196,7 +210,14 @@ export default function Home() {
     );
 
     if (jaExiste) {
-      alert(`A pessoa "${formData.nomeCompleto}" já está na lista atual.`);
+      toast(`A pessoa "${formData.nomeCompleto}" já está na lista atual.`, {
+        icon: '⚠️',
+        style: {
+          border: '2 border #F09A06',
+          background: '#FFFBEB',
+          color: '#B45309',
+        },
+      });
       return;
     }
 
@@ -223,7 +244,7 @@ export default function Home() {
 
   const enviarTodos = async (dataFinal: string) => {
     if (formularios.length === 0) {
-      alert("Nenhum formulário adicionado.");
+      toast.error("Nenhum formulário adicionado.");
       return;
     }
 
@@ -231,7 +252,7 @@ export default function Home() {
 
     try {
       if (!equipe?.spreadsheetId) {
-        alert("Planilha da equipe não encontrada.");
+        toast.error("Planilha da equipe não encontrada.");
         return;
       }
 
@@ -246,12 +267,12 @@ export default function Home() {
         equipe.tipoFormulario
       );
 
-      alert("Todos enviados com sucesso!");
+      toast.success("Todos enviados com sucesso!");
 
       setFormularios([]);
     } catch (error) {
       console.error(error);
-      alert("Erro ao enviar");
+      toast.error("Erro ao enviar");
     } finally {
       setLoading(false);
     }
@@ -292,32 +313,41 @@ export default function Home() {
     async function carregarTecnico() {
       if (!user?.email) return;
 
-      const tecnico = await buscarTecnico(user.email);
+      try {
+        setDadosLoading(true); // Inicia o carregamento dos dados
 
-      if (!tecnico?.ativo) {
-        alert("Usuário sem permissão.");
-        await logout();
-        return;
+        const tecnico = await buscarTecnico(user.email);
+
+        if (!tecnico?.ativo) {
+          toast.error("Usuário sem permissão.");
+          await logout();
+          return;
+        }
+
+        setTecnicoLogado(tecnico.nome);
+
+        const equipeEncontrada = await buscarEquipe(tecnico.equipeId);
+        setEquipe(equipeEncontrada);
+
+        if (!equipeEncontrada) {
+          toast.error("Equipe não encontrada.");
+          await logout();
+          return;
+        }
+
+        if (!equipeEncontrada.ativo) {
+          toast.error("Equipe inativa.");
+          await logout();
+          return;
+        }
+
+        // Aguarda o carregamento dos dados da planilha/formulários
+        await carregarDados(equipeEncontrada.spreadsheetId);
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      } finally {
+        setDadosLoading(false); // Libera a tela apenas quando TUDO terminar
       }
-
-      setTecnicoLogado(tecnico.nome);
-
-      const equipeEncontrada = await buscarEquipe(tecnico.equipeId);
-      setEquipe(equipeEncontrada);
-
-      if (!equipeEncontrada) {
-        alert("Equipe não encontrada.");
-        await logout();
-        return;
-      }
-
-      if (!equipeEncontrada.ativo) {
-        alert("Equipe inativa.");
-        await logout();
-        return;
-      }
-
-      await carregarDados(equipeEncontrada.spreadsheetId);
     }
 
     carregarTecnico();
@@ -327,8 +357,30 @@ export default function Home() {
   // RETURNS CONDICIONAIS
   // =========================
 
-  if (authLoading) {
-    return <p className="p-6">Carregando...</p>;
+  if (authLoading || dadosLoading) {
+    return (
+      <div className="min-h-screen bg-[#f4f0e8] flex flex-col items-center justify-center p-6">
+        <div className="bg-white p-8 rounded-3xl shadow-xl flex flex-col items-center max-w-sm w-full text-center">
+          {/* Spinner animado */}
+          <div className="w-16 h-16 mb-4">
+            <div
+              className="w-16 h-16 rounded-full border-4 border-gray-200 animate-spin"
+              style={{
+                borderTopColor: "#F09A06",
+                borderRightColor: "#1FAEE3",
+              }}
+            />
+          </div>
+
+          <h2 className="text-xl font-bold text-gray-800 mb-1">
+            Corra Pro Abraço
+          </h2>
+          <p className="text-sm font-medium text-gray-500 animate-pulse">
+            Carregando informações...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (!user) return null;
@@ -508,6 +560,18 @@ export default function Home() {
           }}
         />
       </div>
+      {/* CONTAINER DE NOTIFICAÇÕES */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            borderRadius: "16px",
+            background: "#333",
+            color: "#fff",
+            fontWeight: "bold",
+          },
+        }}
+      />
     </main>
   );
 }
