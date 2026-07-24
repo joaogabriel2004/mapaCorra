@@ -4,10 +4,16 @@ import { ColunaFormulario } from "../config/formularios";
 type Props = {
   formularios: Formulario[];
   colunas: ColunaFormulario[];
-  onRemove? : (index: number) => void;
+  onRemove?: (index: number) => void;
+  onEdit?: (index: number) => void; // <-- Nova prop para edição
 };
 
-export default function FormulariosTable({ formularios, colunas, onRemove }: Props) {
+export default function FormulariosTable({
+  formularios,
+  colunas,
+  onRemove,
+  onEdit,
+}: Props) {
   if (formularios.length === 0) return null;
 
   return (
@@ -33,7 +39,7 @@ export default function FormulariosTable({ formularios, colunas, onRemove }: Pro
 
           <tbody>
             {formularios.map((item, index) => (
-              <tr key={index} className="border-t border-gray-200 text-gray-800">
+              <tr key={index} className="border-t border-gray-200 text-gray-800 hover:bg-gray-50 transition">
                 {colunas.map((coluna) => (
                   <td key={coluna.campo} className="p-3">
                     {String(item[coluna.campo as keyof Formulario] || "")}
@@ -43,11 +49,23 @@ export default function FormulariosTable({ formularios, colunas, onRemove }: Pro
                 <td className="p-3 text-center font-bold text-[#ef7d00]">
                   {index + 1}
                 </td>
-                <td className="p-3 text-center">
+                
+                {/* AÇÕES: EDITAR E REMOVER */}
+                <td className="p-3 text-center space-x-3">
+                  {onEdit && (
+                    <button
+                      type="button"
+                      onClick={() => onEdit(index)}
+                      className="text-blue-600 font-bold hover:underline"
+                    >
+                      Editar
+                    </button>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => onRemove?.(index)}
-                    className="text-red-600 font-bold hover:opacity-70"
+                    className="text-red-600 font-bold hover:underline"
                   >
                     Remover
                   </button>
