@@ -174,7 +174,7 @@ export default function Home() {
 
   const limparFormulario = () => {
     const territorio =
-      equipe?.tipoFormulario === "mares" ? "Mares" : initialForm.territorio;
+      equipe?.tipoFormulario === "mares" ? "Mares" : equipe?.tipoFormulario === "praca" ? formData.territorio : equipe?.tipoFormulario === "extensao" ? formData.territorio : initialForm.territorio;
 
     setFormData({
       ...initialForm,
