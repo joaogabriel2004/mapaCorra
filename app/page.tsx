@@ -147,6 +147,7 @@ export default function Home() {
     const campos = CONFIG_FORMULARIOS[tipoFormulario].colunasTabela;
 
     const campoVazio = campos.find(({ campo }) => {
+      if (campo === "id") return false;
       const valor = (formData as Record<string, unknown>)[campo];
 
       return (
