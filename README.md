@@ -1,11 +1,3 @@
-Com certeza! Um bom `README.md` valoriza muito o projeto, facilita para outros desenvolvedores e deixa a documentação super profissional.
-
-Preparei um modelo completo baseado em toda a estrutura do **Corra Pro Abraço** (tecnologias, fluxo de autenticação, formulários por equipe, suporte a planilhas, etc.).
-
-Basta criar um arquivo chamado `README.md` na raiz do seu projeto e colar o conteúdo abaixo:
-
----
-
 ```markdown
 # 🤝 Corra Pro Abraço - Mapa de Campo
 
@@ -71,7 +63,7 @@ MAPACORRA/
 │   │   ├── Input.tsx             # Componente de Input customizado
 │   │   ├── ModalConfirmacao.tsx  # Modal de confirmação para envio
 │   │   ├── Select.tsx            # Componente de Select customizado
-│   │   └── SuggestionList.tsx    # Lista de sugestões para autocomplete
+│   │   └── SuggestionList.tsx    # Lista de sugestões para autocomplete    
 │   ├── config/
 │   │   └── formularios.ts        # Configurações e colunas dos formulários
 │   ├── context/
