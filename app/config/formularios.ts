@@ -1,4 +1,4 @@
-export type TipoFormulario = "centro" | "praca" | "extensao" | "mares" | "vac";
+export type TipoFormulario = "centro" | "praca" | "extensao" | "mares" | "vac" | "arteEducacao";
 
 export type ColunaFormulario = {
   campo: string;
@@ -181,6 +181,27 @@ export const CONFIG_FORMULARIOS: Record<
       { campo: "cadUnico", label: "Cad. Único" },
       { campo: "resultadoAudiencia", label: "Resultado da Audiência" },
       { campo: "contato", label: "Contato" },
+    ],
+  },
+
+  arteEducacao: {
+    colunasEnvio: [
+      "id",
+      "data",
+      "nomeCompleto",
+      "idade",
+      "sexo",
+      "identidadeGenero",
+      "territorio",
+    ],
+    colunasTabela: [
+      { campo: "id", label: "ID" },
+      { campo: "data", label: "Data" },
+      { campo: "nomeCompleto", label: "Nome Completo" },
+      { campo: "idade", label: "Idade" },
+      { campo: "sexo", label: "Sexo" },
+      { campo: "identidadeGenero", label: "Id. Gênero" },   
+      { campo: "territorio", label: "Território" }
     ],
   }
 };

@@ -11,6 +11,7 @@ import FormularioPraca from "@/app/components/formularios/FormularioPraca";
 import FormularioMares from "@/app/components/formularios/FormularioMares";
 import FormularioExtensao from "@/app/components/formularios/FormularioExtensao";
 import FormularioVac from "@/app/components/formularios/FormularioVac";
+import FormularioArteEducacao from "@/app/components/formularios/FormularioArteEducadao";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
 import { buscarTecnico } from "@/app/services/tecnicos";
@@ -136,6 +137,7 @@ export default function Home() {
       contato: pessoa.contato || "",
     });
 
+    console.log(formData);
     setSugestoes([]);
   };
 
@@ -158,7 +160,7 @@ export default function Home() {
     });
 
     if (campoVazio) {
-      toast(`Preencha o campo "${campoVazio.label}`, {
+      toast(`Preencha o campo "${campoVazio.label}"`, {
         icon: '⚠️',
         style: {
           border: '2 border #F09A06',
@@ -173,8 +175,7 @@ export default function Home() {
   };
 
   const limparFormulario = () => {
-    const territorio =
-      equipe?.tipoFormulario === "mares" ? "Mares" : equipe?.tipoFormulario === "praca" ? formData.territorio : equipe?.tipoFormulario === "extensao" ? formData.territorio : initialForm.territorio;
+    const territorio = equipe?.tipoFormulario === "mares" ? "Mares" : equipe?.tipoFormulario === "praca" ? formData.territorio : equipe?.tipoFormulario === "extensao" ? formData.territorio : equipe?.tipoFormulario === "arteEducacao" ? formData.territorio : initialForm.territorio;
 
     setFormData({
       ...initialForm,
@@ -498,6 +499,16 @@ export default function Home() {
               handleChange={handleChange}
               sugestoes={sugestoes}
               selecionarPessoa={selecionarPessoa}
+            />
+          )}
+
+          {equipe?.nome === "Arte-Educação" && (
+            <FormularioArteEducacao
+              formData={formData}
+              handleChange={handleChange}
+              sugestoes={sugestoes}
+              selecionarPessoa={selecionarPessoa}
+              tipoFormulario={equipe?.tipoFormulario}
             />
           )}
 
