@@ -258,9 +258,11 @@ export default function Home() {
         return;
       }
 
+      // Trata a data e formata o campo SPAs (troca vírgula por ponto e vírgula)
       const formulariosComDataAtualizada = formularios.map((form) => ({
         ...form,
         data: dataFinal,
+        spas: form.spas ? form.spas.replace(/,/g, ";") : form.spas,
       }));
 
       await enviarFormularios(
