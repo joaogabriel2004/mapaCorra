@@ -258,7 +258,6 @@ export default function Home() {
         return;
       }
 
-      // Trata a data e formata o campo SPAs (troca vírgula por ponto e vírgula)
       const formulariosComDataAtualizada = formularios.map((form) => ({
         ...form,
         data: dataFinal,
@@ -274,6 +273,10 @@ export default function Home() {
       toast.success("Todos enviados com sucesso!");
 
       setFormularios([]);
+      
+      // LIMPA OS RASCUNHOS APÓS O ENVIO
+      localStorage.removeItem("rascunho_formularios");
+      localStorage.removeItem("rascunho_formData");
     } catch (error) {
       console.error(error);
       toast.error("Erro ao enviar");
@@ -302,6 +305,38 @@ export default function Home() {
       router.push("/login");
     }
   }, [authLoading, user, router]);
+
+  // Carrega os rascunhos salvos quando a página inicia
+  useEffect(() => {
+    const rascunhoLista = localStorage.getItem("rascunho_formularios");
+    const rascunhoForm = localStorage.getItem("rascunho_formData");
+
+    if (rascunhoLista) {
+      try {
+        setFormularios(JSON.parse(rascunhoLista));
+      } catch (e) {
+        console.error("Erro ao carregar rascunho da lista", e);
+      }
+    }
+
+    if (rascunhoForm) {
+      try {
+        setFormData(JSON.parse(rascunhoForm));
+      } catch (e) {
+        console.error("Erro ao carregar rascunho do formulário", e);
+      }
+    }
+  }, []);
+
+  // Salva a lista de formulários sempre que for alterada
+  useEffect(() => {
+    localStorage.setItem("rascunho_formularios", JSON.stringify(formularios));
+  }, [formularios]);
+
+  // Salva o estado atual do formulário sempre que for alterado
+  useEffect(() => {
+    localStorage.setItem("rascunho_formData", JSON.stringify(formData));
+  }, [formData]);
 
   useEffect(() => {
     setFormData((prev) => ({
