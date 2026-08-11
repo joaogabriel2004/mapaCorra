@@ -392,6 +392,16 @@ export default function Home() {
     carregarTecnico();
   }, [user]);
 
+  // Define automaticamente o território "Mares" quando a equipe for carregada
+  useEffect(() => {
+    if (equipe?.tipoFormulario === "mares") {
+      setFormData((prev) => ({
+        ...prev,
+        territorio: "Mares",
+      }));
+    }
+  }, [equipe]);
+
   // =========================
   // RETURNS CONDICIONAIS
   // =========================
