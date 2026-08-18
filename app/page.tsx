@@ -438,7 +438,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col md:flex-row gap-4">
-            {tecnicoLogadoFuncao === "admin" && equipe?.nome === "Extensão" && (
+            {tecnicoLogadoFuncao === "admin" && (
               <button
                 type="button"
                 onClick={() => router.push("/supervisao")}
