@@ -4,4 +4,5 @@ export interface Equipe {
   ativo: boolean;
   spreadsheetId: string;
   tipoFormulario: string;
+  abas?: string[];
 }

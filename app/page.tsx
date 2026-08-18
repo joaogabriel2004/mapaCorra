@@ -31,11 +31,13 @@ export default function Home() {
   const [sugestoes, setSugestoes] = useState<Formulario[]>([]);
   const [loading, setLoading] = useState(false);
   const [dadosLoading, setDadosLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [dataPreenchimento, setDataPreenchimento] = useState(
     new Date().toISOString().split("T")[0]
   );
 
   const [tecnicoLogado, setTecnicoLogado] = useState("");
+  const [tecnicoLogadoFuncao, setTecnicoLogadoFuncao] = useState("");
   const [equipe, setEquipe] = useState<any>(null);
 
   const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
@@ -137,7 +139,6 @@ export default function Home() {
       contato: pessoa.contato || "",
     });
 
-    console.log(formData);
     setSugestoes([]);
   };
 
@@ -306,38 +307,6 @@ export default function Home() {
     }
   }, [authLoading, user, router]);
 
-  // Carrega os rascunhos salvos quando a página inicia
-  useEffect(() => {
-    const rascunhoLista = localStorage.getItem("rascunho_formularios");
-    const rascunhoForm = localStorage.getItem("rascunho_formData");
-
-    if (rascunhoLista) {
-      try {
-        setFormularios(JSON.parse(rascunhoLista));
-      } catch (e) {
-        console.error("Erro ao carregar rascunho da lista", e);
-      }
-    }
-
-    if (rascunhoForm) {
-      try {
-        setFormData(JSON.parse(rascunhoForm));
-      } catch (e) {
-        console.error("Erro ao carregar rascunho do formulário", e);
-      }
-    }
-  }, []);
-
-  // Salva a lista de formulários sempre que for alterada
-  useEffect(() => {
-    localStorage.setItem("rascunho_formularios", JSON.stringify(formularios));
-  }, [formularios]);
-
-  // Salva o estado atual do formulário sempre que for alterado
-  useEffect(() => {
-    localStorage.setItem("rascunho_formData", JSON.stringify(formData));
-  }, [formData]);
-
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
@@ -364,6 +333,8 @@ export default function Home() {
         }
 
         setTecnicoLogado(tecnico.nome);
+        setTecnicoLogadoFuncao(tecnico.funcao);
+
 
         const equipeEncontrada = await buscarEquipe(tecnico.equipeId);
         setEquipe(equipeEncontrada);
@@ -381,10 +352,10 @@ export default function Home() {
         }
 
         // Aguarda o carregamento dos dados da planilha/formulários
-        await carregarDados(equipeEncontrada.spreadsheetId);
+        await carregarDados(equipeEncontrada.spreadsheetId);        
       } catch (error) {
         console.error("Erro ao carregar dados do usuário:", error);
-      } finally {
+      } finally { 
         setDadosLoading(false); // Libera a tela apenas quando TUDO terminar
       }
     }
@@ -406,7 +377,7 @@ export default function Home() {
   // RETURNS CONDICIONAIS
   // =========================
 
-  if (authLoading || dadosLoading) {
+  if (authLoading || dadosLoading || isRedirecting) {
     return (
       <div className="min-h-screen bg-[#f4f0e8] flex flex-col items-center justify-center p-6">
         <div className="bg-white p-8 rounded-3xl shadow-xl flex flex-col items-center max-w-sm w-full text-center">
@@ -466,13 +437,24 @@ export default function Home() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={logout}
-            className="bg-red-600 text-white px-5 py-3 rounded-2xl font-bold"
-          >
-            Sair
-          </button>
+          <div className="flex flex-col md:flex-row gap-4">
+            {tecnicoLogadoFuncao === "admin" && (
+              <button
+                type="button"
+                onClick={() => router.push("/supervisao")}
+                className="bg-[#009640] text-white px-5 py-3 rounded-2xl font-bold hover:opacity-90 transition cursor-pointer"
+              >
+              Supervisão
+            </button>
+            )}
+            <button
+              type="button"
+              onClick={logout}
+              className="bg-red-600 text-white px-5 py-3 rounded-2xl font-bold hover:opacity-90 transition cursor-pointer"
+            >
+              Sair
+            </button>
+          </div>
         </div>
 
         {/* CONTADOR */}
