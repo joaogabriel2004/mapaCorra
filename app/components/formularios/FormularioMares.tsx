@@ -127,7 +127,6 @@ export default function FormularioMares({
           options={[
             "SIM",
             "NÃO",
-            "NR",
             "NSA",
           ]}
         />
