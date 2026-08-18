@@ -82,7 +82,7 @@ export default function FormularioMares({
         />        
 
         <Input
-          label="Intervenção"
+          label="Intervenção/Encaminhamento"
           name="intervencao"
           value={formData.intervencao}
           onChange={handleChange}
