@@ -28,7 +28,7 @@ export function TabelaAssistidos({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 rounded-2xl border border-gray-200 h-150">
       <table className="w-full text-left border-collapse min-w-[850px]">
         <thead>
           <tr className="bg-[#009640] text-white text-sm">
