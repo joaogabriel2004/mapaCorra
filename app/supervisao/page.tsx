@@ -29,8 +29,8 @@ const gerarRegistroMescladoSugestao = (
       identidadeGenero: "",
       racaCor: "",
       spas: "",
+      territorio: "",
       cadUnico: "",
-      territorio: territorioAtual,
       data: "",
       intervencao: "",
       insumos: "",
@@ -55,6 +55,7 @@ const gerarRegistroMescladoSugestao = (
       "identidadeGenero",
       "racaCor",
       "spas",
+      "territorio",
       "cadUnico",
     ];
 
@@ -110,8 +111,8 @@ const gerarRegistroMescladoSugestao = (
     identidadeGenero: pegarMelhorValor("identidadeGenero"),
     racaCor: pegarMelhorValor("racaCor"),
     spas: pegarMelhorValor("spas"),
+    territorio: pegarMelhorValor("territorio"),
     cadUnico: pegarMelhorValor("cadUnico"),
-    territorio: formatarNomeTerritorio(territorioAtual),
     data: pegarMelhorValor("data"),
     intervencao: pegarMelhorValor("intervencao"),
     insumos: pegarMelhorValor("insumos"),
@@ -228,7 +229,7 @@ export default function Supervisao() {
       setLoadingDados(true);
       setSelecionados([]);
 
-      const range = `${abaSelecionada}!A5:H`;
+      const range = `${abaSelecionada}!A5:I`;
       const res = await buscarFormularios(equipe.spreadsheetId, range);
 
       const respostaQualquer = res as any;
@@ -313,7 +314,7 @@ export default function Supervisao() {
 
   // EDIÇÃO INDIVIDUAL
   const handleAbrirModalEdicao = (pessoa: Formulario) => {
-    setRegistroEmEdicao({ ...pessoa, territorio: formatarNomeTerritorio(abaSelecionada) });
+    setRegistroEmEdicao(pessoa);
     setModalEdicaoAberto(true);
   };
 
@@ -610,7 +611,7 @@ export default function Supervisao() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                    Raça / Cor
+                    Raça/Cor
                   </label>
                   <input
                     type="text"

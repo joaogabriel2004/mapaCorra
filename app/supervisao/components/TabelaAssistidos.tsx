@@ -40,7 +40,7 @@ export function TabelaAssistidos({
             <th className="p-3 text-center w-24">Gênero</th>
             <th className="p-3 text-center w-28">Raça/Cor</th>
             <th className="p-3 text-center">SPAs</th>
-            <th className="p-3 text-center w-32">CAD-ÚNICO</th>
+            <th className="p-3 text-center w-32">Território</th>
             <th className="p-3 text-center w-24">Ações</th>
           </tr>
         </thead>

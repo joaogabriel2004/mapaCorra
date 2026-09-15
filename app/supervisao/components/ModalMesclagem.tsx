@@ -62,6 +62,8 @@ export function ModalMesclagem({
                   <th className="p-2.5 text-center">Raça/Cor</th>
                   <th className="p-2.5 text-center">SPAs</th>
                   <th className="p-2.5 text-center">CAD-Único</th>
+                  {/* Adicionado o cabeçalho do Território para alinhar a tabela */}
+                  <th className="p-2.5 text-center">Território</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 text-gray-700">
@@ -77,6 +79,7 @@ export function ModalMesclagem({
                     <td className="p-2.5 text-center">{item.racaCor || "NR"}</td>
                     <td className="p-2.5 text-center">{item.spas || "NR"}</td>
                     <td className="p-2.5 text-center">{item.cadUnico || "NR"}</td>
+                    <td className="p-2.5 text-center">{item.territorio || "NR"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -106,7 +109,7 @@ export function ModalMesclagem({
                 onChange={(e) =>
                   setRegistroFinal({ ...registroFinal, id: e.target.value })
                 }
-                placeholder="Ex: 104; 2023; 12481"
+                placeholder="Ex: 104;2023;12481"
                 className="w-full border border-amber-300 rounded-xl px-3 py-2 text-sm font-mono font-bold bg-white text-[#ef7d00] focus:outline-none focus:border-[#ef7d00]"
               />
             </div>
@@ -206,7 +209,24 @@ export function ModalMesclagem({
 
             <div>
               <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                CAD-ÚNICO:
+                Território de Referência:
+              </label>
+              <input
+                type="text"
+                value={registroFinal.territorio || ""}
+                onChange={(e) =>
+                  setRegistroFinal({
+                    ...registroFinal,
+                    territorio: e.target.value,
+                  })
+                }
+                className="w-full border border-amber-300 rounded-xl px-3 py-2 text-sm bg-white text-gray-600 focus:outline-none focus:border-[#ef7d00]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                Tem CadÚnico?:
               </label>
               <input
                 type="text"
@@ -218,18 +238,6 @@ export function ModalMesclagem({
                   })
                 }
                 className="w-full border border-amber-300 rounded-xl px-3 py-2 text-sm bg-white text-gray-600 focus:outline-none focus:border-[#ef7d00]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                Território:
-              </label>
-              <input
-                type="text"
-                disabled
-                value={registroFinal.territorio || ""}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm bg-gray-100 text-gray-500 font-medium cursor-not-allowed"
               />
             </div>
           </div>

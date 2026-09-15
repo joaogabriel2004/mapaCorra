@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 
     const rows = response.data.values || [];
 
-    // Mapeia as colunas recebidas (A5:H) para a interface Formulario
+    // Mapeia as colunas recebidas (A5:I) para a interface Formulario
     const formularios = rows.map((row) => ({
       id: row[0] || "",
       nomeCompleto: row[1] || "",
@@ -45,7 +45,8 @@ export async function GET(request: Request) {
       identidadeGenero: row[4] || "",
       racaCor: row[5] || "",
       spas: row[6] || "",
-      cadUnico: row[7] || "",
+      territorio: row[7] || "",
+      cadUnico: row[8] || "",
     }));
 
     return NextResponse.json(formularios);
@@ -78,8 +79,8 @@ export async function POST(request: Request) {
       item.identidadeGenero,
       item.racaCor,
       item.spas,
-      item.cadUnico,
       item.territorio,
+      item.cadUnico,
       item.data || new Date().toLocaleDateString("pt-BR"),
     ]);
 
