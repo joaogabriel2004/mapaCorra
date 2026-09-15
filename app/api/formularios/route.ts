@@ -17,9 +17,8 @@ const sheets = google.sheets({
   auth,
 });
 
-const ABA_LEITURA = "Registro";
+const ABA_LEITURA = "Exibir";
 const ABA_ENVIO = "Formulario";
-const ABA_REFERENCIAS = "Referencias";
 
 const COLUNAS_LEITURA = [
   "id",
