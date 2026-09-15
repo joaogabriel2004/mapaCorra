@@ -471,7 +471,7 @@ export default function Supervisao() {
                 <select
                   value={abaSelecionada}
                   onChange={(e) => setAbaSelecionada(e.target.value)}
-                  disabled={listaDeAbas.length === 0}
+                  disabled={listaDeAbas.length === 0 || listaDeAbas.length === 1}
                   className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 bg-white text-gray-800 focus:outline-none focus:border-[#009640] disabled:bg-gray-100"
                 >
                   {listaDeAbas.length === 0 ? (

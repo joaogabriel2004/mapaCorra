@@ -62,7 +62,6 @@ export function ModalMesclagem({
                   <th className="p-2.5 text-center">Raça/Cor</th>
                   <th className="p-2.5 text-center">SPAs</th>
                   <th className="p-2.5 text-center">CAD-Único</th>
-                  {/* Adicionado o cabeçalho do Território para alinhar a tabela */}
                   <th className="p-2.5 text-center">Território</th>
                 </tr>
               </thead>

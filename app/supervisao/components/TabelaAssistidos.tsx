@@ -41,6 +41,7 @@ export function TabelaAssistidos({
             <th className="p-3 text-center w-28">Raça/Cor</th>
             <th className="p-3 text-center">SPAs</th>
             <th className="p-3 text-center w-32">Território</th>
+            <th className="p-3 text-center w-32">Cad. Único</th>
             <th className="p-3 text-center w-24">Ações</th>
           </tr>
         </thead>
@@ -95,6 +96,9 @@ export function TabelaAssistidos({
                   </td>
                   <td className="p-3 text-center border-r border-gray-200">
                     {pessoa.spas || "NR"}
+                  </td>
+                  <td className="p-3 text-center border-r border-gray-200">
+                    {pessoa.territorio || "NR"}
                   </td>
                   <td className="p-3 text-center border-r border-gray-200">
                     {pessoa.cadUnico || "NR"}
