@@ -11,6 +11,7 @@ import { buscarEquipe } from "@/app/services/equipes";
 
 import { TabelaAssistidos } from "./components/TabelaAssistidos";
 import { ModalMesclagem } from "./components/ModalMesclagem";
+import { ModalEdicao } from "./components/ModalEdicao";
 
 const formatarNomeTerritorio = (nomeAba: string) => {
   return nomeAba.replace(/^Lista de Presença\s*-\s*/i, "");
@@ -547,137 +548,15 @@ export default function Supervisao() {
       />
 
       {/* MODAL DE EDIÇÃO INDIVIDUAL */}
-      {modalEdicaoAberto && registroEmEdicao && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl border border-gray-100">
-            <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
-              Editar Assistido (ID: {registroEmEdicao.id})
-            </h3>
-
-            <form onSubmit={handleSalvarEdicao} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                  Nome Completo
-                </label>
-                <input
-                  type="text"
-                  value={registroEmEdicao.nomeCompleto || ""}
-                  onChange={(e) =>
-                    setRegistroEmEdicao({ ...registroEmEdicao, nomeCompleto: e.target.value })
-                  }
-                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-black focus:outline-none focus:border-[#1FAEE3]"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                    Idade
-                  </label>
-                  <input
-                    type="text"
-                    value={registroEmEdicao.idade || ""}
-                    onChange={(e) =>
-                      setRegistroEmEdicao({ ...registroEmEdicao, idade: e.target.value })
-                    }
-                    className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-black focus:outline-none focus:border-[#1FAEE3]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                    Sexo
-                  </label>
-                  <input
-                    type="text"
-                    value={registroEmEdicao.sexo || ""}
-                    onChange={(e) =>
-                      setRegistroEmEdicao({ ...registroEmEdicao, sexo: e.target.value })
-                    }
-                    className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-black focus:outline-none focus:border-[#1FAEE3]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                    Identidade de Gênero
-                  </label>
-                  <input
-                    type="text"
-                    value={registroEmEdicao.identidadeGenero || ""}
-                    onChange={(e) =>
-                      setRegistroEmEdicao({ ...registroEmEdicao, identidadeGenero: e.target.value })
-                    }
-                    className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-black focus:outline-none focus:border-[#1FAEE3]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                    Raça/Cor
-                  </label>
-                  <input
-                    type="text"
-                    value={registroEmEdicao.racaCor || ""}
-                    onChange={(e) =>
-                      setRegistroEmEdicao({ ...registroEmEdicao, racaCor: e.target.value })
-                    }
-                    className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-black focus:outline-none focus:border-[#1FAEE3]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                    SPAs
-                  </label>
-                  <input
-                    type="text"
-                    value={registroEmEdicao.spas || ""}
-                    onChange={(e) =>
-                      setRegistroEmEdicao({ ...registroEmEdicao, spas: e.target.value })
-                    }
-                    className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-black focus:outline-none focus:border-[#1FAEE3]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-600 uppercase mb-1">
-                    CadÚnico
-                  </label>
-                  <input
-                    type="text"
-                    value={registroEmEdicao.cadUnico || ""}
-                    onChange={(e) =>
-                      setRegistroEmEdicao({ ...registroEmEdicao, cadUnico: e.target.value })
-                    }
-                    className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-black focus:outline-none focus:border-[#1FAEE3]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t mt-6">
-                <button
-                  type="button"
-                  onClick={() => setModalEdicaoAberto(false)}
-                  disabled={salvandoEdicao}
-                  className="px-5 py-2.5 rounded-xl border border-gray-300 font-bold text-gray-600 hover:bg-gray-100 transition disabled:opacity-50"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={salvandoEdicao}
-                  className="px-5 py-2.5 rounded-xl bg-[#1FAEE3] text-white font-bold hover:opacity-90 transition disabled:opacity-50 shadow-md"
-                >
-                  {salvandoEdicao ? "Salvando..." : "Salvar Alterações"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <ModalEdicao
+        aberto={modalEdicaoAberto}
+        onFechar={() => setModalEdicaoAberto(false)}
+        registro={registroEmEdicao}
+        setRegistro={setRegistroEmEdicao}
+        onSalvar={handleSalvarEdicao}
+        salvando={salvandoEdicao}
+        equipe={equipe}
+      />
 
       <Toaster position="top-right" />
     </main>
