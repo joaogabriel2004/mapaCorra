@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 
+// Função para limpar o nome da aba e extrair o território (igual ao front-end)
+function formatarNomeTerritorio(nomeAba: string): string {
+  return nomeAba.replace(/^Lista de Presença\s*-\s*/i, "").trim();
+}
+
 // Configuração de autenticação com a conta de serviço do Google
 function getGoogleSheetsClient() {
   const auth = new google.auth.GoogleAuth({
@@ -19,6 +24,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const spreadsheetId = searchParams.get("spreadsheetId");
   const range = searchParams.get("range");
+  const equipe = searchParams.get("equipe");
 
   if (!spreadsheetId || !range) {
     return NextResponse.json(
@@ -29,6 +35,15 @@ export async function GET(request: Request) {
 
   try {
     const sheets = getGoogleSheetsClient();
+    
+    // Extrai o nome bruto da aba do range (ex: "Lista de Presença - Pituba!A5:I" -> "Lista de Presença - Pituba")
+    const nomeAbaBruto = range.includes("!") 
+      ? range.split("!")[0].replace(/[']/g, "").trim() 
+      : "";
+    
+    // Aplica a mesma formatação do front-end para obter o território limpo
+    const territorioFormatado = formatarNomeTerritorio(nomeAbaBruto);
+
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
       range,
@@ -36,18 +51,65 @@ export async function GET(request: Request) {
 
     const rows = response.data.values || [];
 
-    // Mapeia as colunas recebidas (A5:I) para a interface Formulario
-    const formularios = rows.map((row) => ({
-      id: row[0] || "",
-      nomeCompleto: row[1] || "",
-      idade: row[2] || "",
-      sexo: row[3] || "",
-      identidadeGenero: row[4] || "",
-      racaCor: row[5] || "",
-      spas: row[6] || "",
-      territorio: row[7] || "",
-      cadUnico: row[8] || "",
-    }));
+    const formularios = rows
+      .filter((row) => row[1] && row[1].toString().trim() !== "") // Ignora linhas sem nome
+      .map((row) => {
+        if (equipe === "Extensão") {
+          return {
+            id: row[0] || "",
+            nomeCompleto: row[1] || "",
+            idade: row[2] || "",
+            sexo: row[3] || "",
+            identidadeGenero: row[4] || "",
+            racaCor: row[5] || "",
+            spas: row[6] || "",
+            territorio: territorioFormatado, // <--- Aqui assume o território extraído da aba!
+            cadUnico: row[7] || "",
+          };
+        }
+
+        if (equipe === "Centro de Referência") {
+          return {
+            id: row[0] || "",
+            nomeCompleto: row[1] || "",
+            idade: row[2] || "",
+            sexo: row[3] || "",
+            identidadeGenero: row[4] || "",
+            racaCor: row[5] || "",
+            spas: row[6] || "",
+            territorio: row[7] || "",
+            cadUnico: row[8] || "", 
+          };
+        }
+
+        if (equipe === "Praça") {
+          return {
+            id: row[0] || "",
+            nomeCompleto: row[1] || "",
+            idade: row[2] || "",
+            sexo: row[3] || "",
+            identidadeGenero: row[4] || "",
+            racaCor: row[5] || "",
+            spas: row[6] || "",
+            cadUnico: row[7] || "",
+            territorio: row[8] || "",
+          };
+        }
+
+        if (equipe === "Mares") {
+          return {
+            id: row[0] || "",
+            nomeCompleto: row[1] || "",
+            idade: row[2] || "",
+            sexo: row[3] || "",
+            identidadeGenero: row[4] || "",
+            racaCor: row[5] || "",
+            spas: row[6] || "",
+            cadUnico: row[7] || "",
+            territorio: "",
+          };
+        }
+      });
 
     return NextResponse.json(formularios);
   } catch (error: any) {
@@ -59,7 +121,7 @@ export async function GET(request: Request) {
 // POST: Escreve a linha mesclada na aba "Mesclagem"
 export async function POST(request: Request) {
   try {
-    const { spreadsheetId, aba, dados } = await request.json();
+    const { spreadsheetId, aba, dados, equipe } = await request.json();
 
     if (!spreadsheetId || !aba || !dados) {
       return NextResponse.json(
@@ -69,20 +131,69 @@ export async function POST(request: Request) {
     }
 
     const sheets = getGoogleSheetsClient();
+    const equipeNome = equipe;
 
     // Converte os objetos de volta para matriz de valores (linhas x colunas)
-    const values = dados.map((item: any) => [
-      item.id,
-      item.nomeCompleto,
-      item.idade,
-      item.sexo,
-      item.identidadeGenero,
-      item.racaCor,
-      item.spas,
-      item.territorio,
-      item.cadUnico,
-      item.data || new Date().toLocaleDateString("pt-BR"),
-    ]);
+    const values = dados.map((item: any) => {
+      if (equipeNome === "Centro de Referência") {
+        return [
+          item.id,
+          item.nomeCompleto,
+          item.idade,
+          item.sexo,
+          item.identidadeGenero,
+          item.racaCor,
+          item.spas,
+          item.territorio,
+          item.cadUnico,
+          item.data || new Date().toLocaleDateString("pt-BR"),
+        ];
+      }
+
+      if (equipeNome === "Extensão") {
+        return [
+          item.id,
+          item.nomeCompleto,
+          item.idade,
+          item.sexo,
+          item.identidadeGenero,
+          item.racaCor,
+          item.spas,
+          item.cadUnico,
+          item.territorio,
+          item.data || new Date().toLocaleDateString("pt-BR"),
+        ];
+      }
+
+      if (equipeNome === "Praça") {
+        return [
+          item.id,
+          item.nomeCompleto,
+          item.idade,
+          item.sexo,
+          item.identidadeGenero,
+          item.racaCor,
+          item.spas,
+          item.cadUnico,
+          item.territorio,
+          item.data || new Date().toLocaleDateString("pt-BR"),
+        ];
+      }
+
+      if (equipeNome === "Mares") {
+        return [
+          item.id,
+          item.nomeCompleto,
+          item.idade,
+          item.sexo,
+          item.identidadeGenero,
+          item.racaCor,
+          item.spas,
+          item.cadUnico,
+          item.data || new Date().toLocaleDateString("pt-BR"),
+        ];
+      }
+    });
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,

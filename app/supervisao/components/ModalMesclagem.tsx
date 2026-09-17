@@ -10,6 +10,7 @@ interface ModalMesclagemProps {
   setRegistroFinal: React.Dispatch<React.SetStateAction<Formulario>>;
   onConfirmar: () => void;
   enviando: boolean;
+  equipe: any;
 }
 
 export function ModalMesclagem({
@@ -20,9 +21,9 @@ export function ModalMesclagem({
   setRegistroFinal,
   onConfirmar,
   enviando,
+  equipe
 }: ModalMesclagemProps) {
   if (!aberto) return null;
-
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 border border-gray-100">
@@ -44,7 +45,7 @@ export function ModalMesclagem({
             ✕
           </button>
         </div>
-
+        
         {/* 1. SELEÇÃO */}
         <div className="mb-6">
           <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
@@ -62,7 +63,9 @@ export function ModalMesclagem({
                   <th className="p-2.5 text-center">Raça/Cor</th>
                   <th className="p-2.5 text-center">SPAs</th>
                   <th className="p-2.5 text-center">CAD-Único</th>
-                  <th className="p-2.5 text-center">Território</th>
+                  {equipe.nome === "Centro de Referência" || equipe.nome === "Praça" ? (
+                    <th className="p-2.5 text-center">Território</th>
+                  ) : null}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 text-gray-700">
@@ -78,7 +81,9 @@ export function ModalMesclagem({
                     <td className="p-2.5 text-center">{item.racaCor || "NR"}</td>
                     <td className="p-2.5 text-center">{item.spas || "NR"}</td>
                     <td className="p-2.5 text-center">{item.cadUnico || "NR"}</td>
-                    <td className="p-2.5 text-center">{item.territorio || "NR"}</td>
+                    {equipe.nome === "Centro de Referência" || equipe.nome === "Praça" ? (
+                      <td className="p-2.5 text-center">{item.territorio || "NR"}</td>
+                    ) : null}
                   </tr>
                 ))}
               </tbody>
@@ -206,22 +211,24 @@ export function ModalMesclagem({
               />
             </div>
 
-            <div>
-              <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                Território de Referência:
-              </label>
-              <input
-                type="text"
-                value={registroFinal.territorio || ""}
-                onChange={(e) =>
-                  setRegistroFinal({
-                    ...registroFinal,
-                    territorio: e.target.value,
-                  })
-                }
-                className="w-full border border-amber-300 rounded-xl px-3 py-2 text-sm bg-white text-gray-600 focus:outline-none focus:border-[#ef7d00]"
-              />
-            </div>
+            {equipe.nome === "Centro de Referência" || equipe.nome === "Praça" ? (
+              <div>
+                <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                  Território de Referência:
+                </label>
+                <input
+                  type="text"
+                  value={registroFinal.territorio || ""}
+                  onChange={(e) =>
+                    setRegistroFinal({
+                      ...registroFinal,
+                      territorio: e.target.value,
+                    })
+                  }
+                  className="w-full border border-amber-300 rounded-xl px-3 py-2 text-sm bg-white text-gray-600 focus:outline-none focus:border-[#ef7d00]"
+                />
+              </div>
+            ) : null}
 
             <div>
               <label className="block text-[11px] font-bold text-gray-600 mb-1">

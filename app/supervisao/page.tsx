@@ -230,7 +230,7 @@ export default function Supervisao() {
       setSelecionados([]);
 
       const range = `${abaSelecionada}!A5:I`;
-      const res = await buscarFormularios(equipe.spreadsheetId, range);
+      const res = await buscarFormularios(equipe.spreadsheetId, range, equipe.nome);
 
       const respostaQualquer = res as any;
       const lista: Formulario[] = Array.isArray(respostaQualquer)
@@ -297,7 +297,8 @@ export default function Supervisao() {
       await enviarFormularios(
         [registroFinal],
         equipe.spreadsheetId,
-        "Mesclagem"
+        "Mesclagem",
+        equipe.nome
       );
 
       toast.success("Registro mesclado enviado com sucesso!");
@@ -333,7 +334,8 @@ export default function Supervisao() {
       await enviarFormularios(
         [registroEmEdicao],
         equipe.spreadsheetId,
-        "Edicao"
+        "Edicao",
+        equipe.nome
       );
 
       toast.success("Informações atualizadas com sucesso!");
@@ -525,6 +527,7 @@ export default function Supervisao() {
                 onEditar={handleAbrirModalEdicao}
                 loading={loadingDados}
                 nomeTerritorio={formatarNomeTerritorio(abaSelecionada)}
+                equipe={equipe}
               />
             </div>
           </div>
@@ -540,6 +543,7 @@ export default function Supervisao() {
         setRegistroFinal={setRegistroFinal}
         onConfirmar={handleConfirmarEEnviarMesclagem}
         enviando={enviando}
+        equipe={equipe}
       />
 
       {/* MODAL DE EDIÇÃO INDIVIDUAL */}

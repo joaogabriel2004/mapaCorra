@@ -9,6 +9,7 @@ interface TabelaAssistidosProps {
   onEditar: (pessoa: Formulario) => void;
   loading: boolean;
   nomeTerritorio: string;
+  equipe: any; 
 }
 
 export function TabelaAssistidos({
@@ -18,6 +19,7 @@ export function TabelaAssistidos({
   onEditar,
   loading,
   nomeTerritorio,
+  equipe,
 }: TabelaAssistidosProps) {
   if (loading) {
     return (
@@ -40,7 +42,9 @@ export function TabelaAssistidos({
             <th className="p-3 text-center w-24">Gênero</th>
             <th className="p-3 text-center w-28">Raça/Cor</th>
             <th className="p-3 text-center">SPAs</th>
-            <th className="p-3 text-center w-32">Território</th>
+            {equipe.nome === "Centro de Referência" || equipe.nome === "Praça" ? (
+              <th className="p-3 text-center w-32">Território</th>
+            ) : null}
             <th className="p-3 text-center w-32">Cad. Único</th>
             <th className="p-3 text-center w-24">Ações</th>
           </tr>
@@ -97,9 +101,11 @@ export function TabelaAssistidos({
                   <td className="p-3 text-center border-r border-gray-200">
                     {pessoa.spas || "NR"}
                   </td>
-                  <td className="p-3 text-center border-r border-gray-200">
-                    {pessoa.territorio || "NR"}
-                  </td>
+                  {equipe.nome === "Centro de Referência" || equipe.nome === "Praça" ? (
+                    <td className="p-3 text-center border-r border-gray-200">
+                      {pessoa.territorio || "NR"}
+                    </td>
+                  ) : null}
                   <td className="p-3 text-center border-r border-gray-200">
                     {pessoa.cadUnico || "NR"}
                   </td>

@@ -3,10 +3,11 @@ import { Formulario } from "@/app/types/formulario";
 // Busca os dados da aba/território especificado da planilha
 export async function buscarFormularios(
   spreadsheetId: string,
-  range: string
+  range: string,
+  equipe: string
 ): Promise<Formulario[]> {
   const res = await fetch(
-    `/api/supervisao?spreadsheetId=${spreadsheetId}&range=${encodeURIComponent(range)}`
+    `/api/supervisao?spreadsheetId=${spreadsheetId}&range=${encodeURIComponent(range)}&equipe=${encodeURIComponent(equipe)}`,
   );
 
   if (!res.ok) {
@@ -20,7 +21,8 @@ export async function buscarFormularios(
 export async function enviarFormularios(
   dados: Formulario[],
   spreadsheetId: string,
-  aba: string
+  aba: string,
+  equipe: string
 ): Promise<void> {
   const res = await fetch("/api/supervisao", {
     method: "POST",
@@ -29,6 +31,7 @@ export async function enviarFormularios(
       spreadsheetId,
       aba,
       dados,
+      equipe
     }),
   });
 
