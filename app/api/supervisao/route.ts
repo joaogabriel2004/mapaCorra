@@ -109,6 +109,17 @@ export async function GET(request: Request) {
             territorio: "",
           };
         }
+
+        if (equipe === "Arte-Educação") {
+          return {
+            id: row[0] || "",
+            nomeCompleto: row[1] || "",
+            idade: row[2] || "",
+            sexo: row[3] || "",
+            identidadeGenero: row[4] || "",
+            territorio: territorioFormatado, // <--- Aqui assume o território extraído da aba!
+          };
+        }
       });
 
     return NextResponse.json(formularios);
@@ -190,6 +201,18 @@ export async function POST(request: Request) {
           item.racaCor,
           item.spas,
           item.cadUnico,
+          item.data || new Date().toLocaleDateString("pt-BR"),
+        ];
+      }
+
+      if (equipeNome === "Arte-Educação") {
+        return [
+          item.id,
+          item.nomeCompleto,
+          item.idade,
+          item.sexo,
+          item.identidadeGenero,
+          item.territorio,
           item.data || new Date().toLocaleDateString("pt-BR"),
         ];
       }

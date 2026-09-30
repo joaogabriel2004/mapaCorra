@@ -40,12 +40,18 @@ export function TabelaAssistidos({
             <th className="p-3 text-center w-20">Idade</th>
             <th className="p-3 text-center w-20">Sexo</th>
             <th className="p-3 text-center w-24">Gênero</th>
-            <th className="p-3 text-center w-28">Raça/Cor</th>
-            <th className="p-3 text-center">SPAs</th>
+            {equipe.nome !== "Arte-Educação" ? (
+              <th className="p-3 text-center w-28">Raça/Cor</th>
+            ) : null}
+            {equipe.nome !== "Arte-Educação" ? (
+              <th className="p-3 text-center w-28">SPAs</th>
+            ) : null}
             {equipe.nome === "Centro de Referência" || equipe.nome === "Praça" ? (
               <th className="p-3 text-center w-32">Território</th>
             ) : null}
-            <th className="p-3 text-center w-32">Cad. Único</th>
+            {equipe.nome !== "Arte-Educação" ? (
+              <th className="p-3 text-center w-32">Cad. Único</th>
+            ) : null}
             <th className="p-3 text-center w-24">Ações</th>
           </tr>
         </thead>
@@ -95,20 +101,26 @@ export function TabelaAssistidos({
                   <td className="p-3 text-center border-r border-gray-200">
                     {pessoa.identidadeGenero || "NR"}
                   </td>
-                  <td className="p-3 text-center border-r border-gray-200">
-                    {pessoa.racaCor || "NR"}
-                  </td>
-                  <td className="p-3 text-center border-r border-gray-200">
-                    {pessoa.spas || "NR"}
-                  </td>
+                  {equipe.nome !== "Arte-Educação" ? (
+                    <td className="p-3 text-center border-r border-gray-200">
+                      {pessoa.racaCor || "NR"}
+                    </td>
+                  ) : null}
+                  {equipe.nome !== "Arte-Educação" ? (
+                    <td className="p-3 text-center border-r border-gray-200">
+                      {pessoa.spas || "NR"}
+                    </td>
+                  ) : null}
                   {equipe.nome === "Centro de Referência" || equipe.nome === "Praça" ? (
                     <td className="p-3 text-center border-r border-gray-200">
                       {pessoa.territorio || "NR"}
                     </td>
                   ) : null}
-                  <td className="p-3 text-center border-r border-gray-200">
-                    {pessoa.cadUnico || "NR"}
-                  </td>
+                  {equipe.nome !== "Arte-Educação" ? (
+                    <td className="p-3 text-center border-r border-gray-200">
+                      {pessoa.cadUnico || "NR"}
+                    </td>
+                  ) : null}
                   <td className="p-3 text-center">
                     <button
                       type="button"
