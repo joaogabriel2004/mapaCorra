@@ -1,4 +1,3 @@
-```markdown
 # 🤝 Corra Pro Abraço - Mapa de Campo
 
 Sistema Web para gestão e coleta de dados de campo das equipes do **Programa Corra Pro Abraço**. A aplicação permite que técnicos realizem o preenchimento, edição e sincronização em lote dos formulários de atendimento de acordo com a especificidade de cada equipe.
