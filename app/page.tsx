@@ -14,6 +14,8 @@ import FormularioVac from "@/app/components/formularios/FormularioVac";
 import FormularioArteEducacao from "@/app/components/formularios/FormularioArteEducadao";
 import ModalConfirmacao from "@/app/components/ModalConfirmacao";
 
+import Manutencao from "@/app/components/Manutencao";
+
 import { buscarTecnico } from "@/app/services/tecnicos";
 import { buscarFormularios, enviarFormularios } from "@/app/services/api";
 import { buscarEquipe } from "@/app/services/equipes";
@@ -21,6 +23,12 @@ import { Formulario, initialForm } from "@/app/types/formulario";
 import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
 
 export default function Home() {
+  const EM_MANUTENCAO = true;
+
+  if (EM_MANUTENCAO) {
+    return <Manutencao previsao="Quando João descobrir como resolver o problema" />;
+  }
+
   const router = useRouter();
 
   const { user, loading: authLoading, logout } = useAuth();
