@@ -23,7 +23,7 @@ import { Formulario, initialForm } from "@/app/types/formulario";
 import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
 
 export default function Home() {
-  const EM_MANUTENCAO = true;
+  const EM_MANUTENCAO = false;
 
   if (EM_MANUTENCAO) {
     return <Manutencao previsao="Quando João descobrir como resolver o problema" />;
