@@ -23,10 +23,10 @@ import { Formulario, initialForm } from "@/app/types/formulario";
 import { CONFIG_FORMULARIOS, TipoFormulario } from "@/app/config/formularios";
 
 export default function Home() {
-  const EM_MANUTENCAO = false;
+  const EM_MANUTENCAO = true;
 
   if (EM_MANUTENCAO) {
-    return <Manutencao previsao="Quando João descobrir como resolver o problema" />;
+    return <Manutencao previsao="Previsão de retorno: 10h ;)" />;
   }
 
   const router = useRouter();
