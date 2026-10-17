@@ -26,7 +26,7 @@ export default function Home() {
   const EM_MANUTENCAO = true;
 
   if (EM_MANUTENCAO) {
-    return <Manutencao previsao="Previsão de retorno: 10h ;)" />;
+    return <Manutencao previsao="Em breve." />;
   }
 
   const router = useRouter();
